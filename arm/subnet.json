@@ -30,10 +30,7 @@
             "apiVersion": "2019-12-01",
             "properties": {
                 "addressPrefix": "[parameters('addressPrefix')]"
-            },
-            "tags": {
-                "displayname": "Subnet42"
-            }            
+            }
         }
     ],
     "outputs": {
