@@ -1,0 +1,17 @@
+# Login to Azure
+az login
+az account show
+
+# Resource Group
+# ---------------
+export rgName="ps61-RG"
+export location="westeurope"
+az group create --name $rgName --location $location --tags "seminar=ps61"
+# -- list --
+az group list -o table
+
+# Virtual Network (template vnet.json)
+# ------------------------------------
+az deployment group create --resource-group $rgName --template-file arm/vnet.json --name di01 
+# -- list --
+az network vnet list --resource-group $rgName -o table

@@ -1,0 +1,109 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+           "type": "string",
+           "metadata": {
+                "description": "name of the virtual network"
+            },
+            "defaultValue": "Vnet1"
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "vnetAddressSpace": "10.0.0.0/16",
+        "subnet1Name": "default",
+        "subnet1AddressPrefix": "10.0.0.0/24",
+        "subnet2Name": "servers",
+        "subnet2AddressPrefix": "10.0.1.0/24",
+        "bastionHostName": "[concat(parameters('vnetName'),'-Bastion')]",
+        "bastionHostIpAddressName": "[concat(variables('bastionHostName'),'-Ip')]",
+        "bastionSubnetName": "AzureBastionSubnet",
+        "bastionSubnetAddressPrefix": "10.0.255.32/27"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('vnetName')]",
+            "apiVersion": "2018-08-01",
+            "location": "[variables('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('vnetAddressSpace')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnet1Name')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnet1AddressPrefix')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('subnet2Name')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnet2AddressPrefix')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('bastionSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('bastionSubnetAddressPrefix')]"
+                        }
+                    }
+                ]
+            },
+            "tags": {
+                "displayname": "My VNet"
+            }            
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('bastionHostIpAddressName')]",
+            "apiVersion": "2019-02-01",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            },
+            "tags": {
+                "displayname": "My BastionHost IP"
+            }
+        },
+        {
+            "type": "Microsoft.Network/bastionHosts",
+            "apiVersion": "2019-11-01",
+            "name": "[variables('bastionHostName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIpAddresses', variables('bastionHostIpAddressName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('bastionHostIpAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('bastionSubnetName'))]"
+                            }
+
+                        }
+                    }
+                ]
+            },
+            "tags": {
+                "displayname": "My BastionHost"
+            }
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
