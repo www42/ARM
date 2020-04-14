@@ -1,0 +1,46 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+           "type": "string",
+           "metadata": {
+                "description": "Name of existing virtual network."
+            }
+        },
+        "subnetName": {
+           "type": "string",
+           "metadata": {
+               "description": "Name of subnet to add."
+           }
+        },
+        "addressPrefix": {
+           "type": "string",
+           "metadata": {
+                "description": "Address prefix of subnet to add"
+            },
+            "defaultValue": "10.0.42.0/24"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
+            "apiVersion": "2019-12-01",
+            "properties": {
+                "addressPrefix": "[parameters('addressPrefix')]"
+            },
+            "tags": {
+                "displayname": "Subnet42"
+            }            
+        }
+    ],
+    "outputs": {
+        "resourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('subnetName'))]"
+        }
+    },
+    "functions": []
+}
