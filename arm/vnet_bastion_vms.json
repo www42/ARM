@@ -13,14 +13,28 @@
     "variables": {
         "location": "[resourceGroup().location]",
         "vnetName": "Vnet",
+        "vnetAddressSpace": "10.0.0.0/16",
         "subnetName": "servers",
+        "subnetAddressPrefix": "10.0.0.0/24",
         "bastionHostName": "[concat(variables('vnetName'), '-Bastion')]",
         "bastionHostIpAddressName": "[concat(variables('bastionHostName'), '-Ip')]",
         "bastionSubnetName": "AzureBastionSubnet",
+        "bastionSubnetAddressPrefix": "10.0.255.32/27",
         "dcVmName": "DC",
+        "dcVmIp": "10.0.0.200",
         "dcVmNetworkInterfaceName": "[concat(variables('dcVmName'), '-Nic')]",
         "dcVmOsDiskName": "[concat(variables('dcVmName'), '-Disk')]",
         "dcVmComputerName": "[variables('dcVmName')]",
+        "server1VmName": "SVR1",
+        "server1VmIp": "10.0.0.201",
+        "server1VmNetworkInterfaceName": "[concat(variables('server1VmName'), '-Nic')]",
+        "server1VmOsDiskName": "[concat(variables('server1VmName'), '-Disk')]",
+        "server1VmComputerName": "[variables('server1VmName')]",
+        "server2VmName": "SVR2",
+        "server2VmIp": "10.0.0.202",
+        "server2VmNetworkInterfaceName": "[concat(variables('server2VmName'), '-Nic')]",
+        "server2VmOsDiskName": "[concat(variables('server2VmName'), '-Disk')]",
+        "server2VmComputerName": "[variables('server2VmName')]",
         "adminUserName": "Student",
         "adminPassword": "Pa55w.rd1234"
     },
@@ -33,27 +47,42 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "10.0.0.0/16"
+                        "[variables('vnetAddressSpace')]"
                     ]
                 },
                 "subnets": [
                     {
                         "name": "[variables('subnetName')]",
                         "properties": {
-                            "addressPrefix": "10.0.0.0/24"
+                            "addressPrefix": "[variables('subnetAddressPrefix')]"
                         }
                     },
                     {
                         "name": "[variables('bastionSubnetName')]",
                         "properties": {
-                            "addressPrefix": "10.0.255.32/27"
+                            "addressPrefix": "[variables('bastionSubnetAddressPrefix')]"
                         }
                     }
                 ]
             },
             "tags": {
-                "displayname": "Vnet"
+                "seminar": "ps61"
             }            
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('bastionHostIpAddressName')]",
+            "apiVersion": "2019-02-01",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            },
+            "tags": {
+                "seminar": "ps61"
+            }
         },
         {
             "type": "Microsoft.Network/bastionHosts",
@@ -80,22 +109,7 @@
                 ]
             },
             "tags": {
-                "displayname": "BastionHost"
-            }
-        },
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[variables('bastionHostIpAddressName')]",
-            "apiVersion": "2019-02-01",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard"
-            },
-            "properties": {
-                "publicIPAllocationMethod": "Static"
-            },
-            "tags": {
-                "displayname": "BastionHost IP"
+                "seminar": "ps61"
             }
         },
         {
@@ -104,7 +118,7 @@
             "apiVersion": "2019-07-01",
             "location": "[variables('location')]",
             "tags": {
-                "displayname": "DC"
+                "seminar": "ps61"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('dcVmNetworkInterfaceName'))]"
@@ -141,6 +155,90 @@
             }
         },
         {
+            "name": "[variables('server1VmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "location": "[variables('location')]",
+            "tags": {
+                "seminar": "ps61"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('server1VmNetworkInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[variables('server1VmOsDiskName')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "osProfile": {
+                    "computerName": "[variables('server1VmComputerName')]",
+                    "adminUsername": "[variables('adminUserName')]",
+                    "adminPassword": "[variables('adminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('server1VmNetworkInterfaceName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[variables('server2VmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "location": "[variables('location')]",
+            "tags": {
+                "seminar": "ps61"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('server2VmNetworkInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[variables('server2VmOsDiskName')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "osProfile": {
+                    "computerName": "[variables('server2VmComputerName')]",
+                    "adminUsername": "[variables('adminUserName')]",
+                    "adminPassword": "[variables('adminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('server2VmNetworkInterfaceName'))]"
+                        }
+                    ]
+                }
+            }
+        }, 
+        {
            "name": "[variables('dcVmNetworkInterfaceName')]",
            "type": "Microsoft.Network/networkInterfaces",
            "apiVersion": "2019-11-01",
@@ -149,7 +247,7 @@
                "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
            ],
            "tags": {
-               "displayName": "DC Nic"
+               "seminar": "ps61"
            },
            "properties": {
                "ipConfigurations": [
@@ -157,7 +255,59 @@
                        "name": "ipConfig1",
                        "properties": {
                            "privateIPAllocationMethod": "Static",
-                           "privateIPAddress": "10.0.0.200",
+                           "privateIPAddress": "[variables('dcVmIp')]",
+                           "subnet": {
+                               "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]"
+                           }
+                       }
+                   }
+               ]
+           }
+        },
+        {
+           "name": "[variables('server1VmNetworkInterfaceName')]",
+           "type": "Microsoft.Network/networkInterfaces",
+           "apiVersion": "2019-11-01",
+           "location": "[variables('location')]",
+           "dependsOn": [
+               "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+           ],
+           "tags": {
+               "seminar": "ps61"
+           },
+           "properties": {
+               "ipConfigurations": [
+                   {
+                       "name": "ipConfig1",
+                       "properties": {
+                           "privateIPAllocationMethod": "Static",
+                           "privateIPAddress": "[variables('server1VmIp')]",
+                           "subnet": {
+                               "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]"
+                           }
+                       }
+                   }
+               ]
+           }
+        },
+        {
+           "name": "[variables('server2VmNetworkInterfaceName')]",
+           "type": "Microsoft.Network/networkInterfaces",
+           "apiVersion": "2019-11-01",
+           "location": "[variables('location')]",
+           "dependsOn": [
+               "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+           ],
+           "tags": {
+               "seminar": "ps61"
+           },
+           "properties": {
+               "ipConfigurations": [
+                   {
+                       "name": "ipConfig1",
+                       "properties": {
+                           "privateIPAllocationMethod": "Static",
+                           "privateIPAddress": "[variables('server2VmIp')]",
                            "subnet": {
                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]"
                            }
