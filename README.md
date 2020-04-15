@@ -1,1 +1,1 @@
-Welcome to s19!
+# Some Azure ARM Templates
