@@ -114,7 +114,7 @@ az network public-ip delete --name $bastionIp --resource-group $rgName
 #   deploy
 deploymentName="do01"
 az deployment group create \
-    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/vnet_bastion_vm.json"\
+    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/vnet_bastion_vm.json" \
     --resource-group $rgName \
     --name $deploymentName
 
