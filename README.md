@@ -1,12 +1,17 @@
-# Azure ARM Templates
-## How to author ARM templates
+# My Azure ARM Templates
 
-[Tutorial: Create and deploy your first ARM template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-tutorial-create-first-template) (Microsoft Docs)
+[What are ARM templates?](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/overview) (Microsoft Docs)
 
-[Tutorial: Use Azure Quickstart templates](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-tutorial-quickstart-template) (Microsoft Docs)
+### How to author ARM templates?
 
-[Neil Peterson explains the ARM Tools for VS Code](https://channel9.msdn.com/Shows/IT-Ops-Talk/Azure-Resource-Manager-Tools-for-VS-Code) (Channel 9)
+* [Tutorial: Create and deploy your first ARM template](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-tutorial-create-first-template) (Microsoft Docs)
 
+* [Tutorial: Use Azure Quickstart templates](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-tutorial-quickstart-template) (Microsoft Docs)
+
+* [Neil Peterson explains the ARM Tools for VS Code](https://channel9.msdn.com/Shows/IT-Ops-Talk/Azure-Resource-Manager-Tools-for-VS-Code) (Channel 9)
+
+
+### My templates
 
 | Template                                     | Purpose      |
 |----------------------------------------------|--------------|
