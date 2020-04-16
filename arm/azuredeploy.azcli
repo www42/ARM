@@ -1,0 +1,145 @@
+# ==============================================================================
+# All ARM templates are located at public repo https://github.com/www42/s19.git
+# ==============================================================================
+
+# Login to Azure
+# --------------
+az login
+az account list -o table
+
+sub='9c5ec55f-11f8-4baf-9460-ae5f3888346e'
+az account set --subscription $sub
+az account show
+
+# Variables
+# ---------
+#   for use in a sub shell each variable has to be exported
+#      export foo="bar"
+#      ^^^^^^
+#      az ... | xargs -L1 bash -c 'az ... "$foo"'
+
+export location="westeurope"
+
+# Resource Group
+# --------------
+#   create
+export rgName="ps61-RG"
+az group create --name $rgName --location $location --tags "seminar=ps61"
+
+#   list rg
+az group list -o table
+
+#   list resources in rg
+az resource list --resource-group $rgName --query "[].{Name:name, Type:type}" -o table
+
+#   remove single rg
+az group delete --name $rgName --yes --no-wait
+
+#   remove all content of rg (template empty.json)
+az deployment group create \
+    --mode Complete \
+    --resource-group $rgName \
+    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/empty.json" \
+    --name del01 \
+    --no-wait
+
+
+# Template vnet.json (Virtual Network)
+# ------------------------------------
+#   deploy
+deploymentName="mi01"
+vNet="Vnet2"
+az deployment group create  \
+    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/vnet.json" \
+    --parameters vnetName=$vNet \
+    --resource-group $rgName \
+    --name $deploymentName
+
+#   list vnet
+az network vnet list --resource-group $rgName -o table
+
+#   remove single vnet
+az network vnet delete --name $vNet --resource-group $rgName
+
+#   remove all vnet
+az network vnet list --resource-group $rgName --query "[]".name --output tsv | \
+    xargs -L1 bash -c 'az network vnet delete --name $0 --resource-group "$rgName"'
+
+
+# Template subnet.json (Additional Subnet)
+# ----------------------------------------
+#   deploy
+deploymentName="mi02"
+vNet="Vnet2"
+subnet="AzureBastionSubnet"
+addressPrefix="10.0.200.192/26"
+az deployment group create \
+    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/subnet.json"\
+    --parameters  vnetName=$vNet \
+    --parameters  subnetName=$subnet \
+    --parameters  addressPrefix=$addressPrefix \
+    --resource-group $rgName \
+    --name $deploymentName
+
+#  -list
+az network vnet subnet list --resource-group $rgName --vnet-name $vNet --query "[].{Name:name,Prefix:addressPrefix}" -o table
+
+
+# Template vnet_bastion.json (Virtual Network with Bastion Host)
+# --------------------------------------------------------------
+#   deploy
+deploymentName="mi03"
+vNet="Vnet2"
+az deployment group create \
+    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/vnet_bastion.json"\
+    --parameters  vnetName=$vNet \
+    --resource-group $rgName \
+    --name $deploymentName
+
+
+bastion="$vNet-Bastion"
+bastionIp="$bastionHost-Ip"
+#   list bastion
+az network bastion list --query "[].{Name:name, Location:location, resourceGroup:resourceGroup}" -o table
+
+#   remove single bastion
+az network bastion delete --name $bastion --resource-group $rgName
+
+#   list public ip
+az network public-ip list -o table
+
+#   remove single public ip
+az network public-ip delete --name $bastionIp --resource-group $rgName
+
+
+
+# Template vnet_bastion_vm.json (Virtual Network with Bastion Host and single VM)
+# -------------------------------------------------------------------------------
+#   deploy
+deploymentName="do01"
+az deployment group create \
+    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/vnet_bastion_vm.json"\
+    --resource-group $rgName \
+    --name $deploymentName
+
+#    list vm
+az vm list --resource-group $rgName --show-details -o table
+
+#    stop single vm
+vmName="SVR1"
+az vm deallocate --name $vmName --resource-group $rgName
+
+#    stop all vm in rg
+az vm list --resource-group $rgName --query "[].name" -o tsv | \
+    xargs -L1 bash -c 'az vm deallocate --name $0 --resource-group "$rgName"'
+
+
+
+# Template ps-61.json (Virtual Network with Bastion Host and three VMs)
+# ---------------------------------------------------------------------
+#   deploy
+deploymentName="do01"
+az deployment group create \
+    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/ps-61.json"\
+    --resource-group $rgName \
+    --name $deploymentName
