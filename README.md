@@ -22,7 +22,6 @@
 | [vnet_bastion_vm.json](vnet_bastion_vm.json) | Virtual Network with Bastion Host and single VM |
 | [ps-61.json](ps-61.json)                     | PS-61 Scenario: Virtual Network with Bastion Host and three VMs |
 
-_____
 
 ![](img/mascot-doc.png)
 [Learning path for Azure Administrator](https://aka.ms/AzureAdminInfographic)
