@@ -27,7 +27,7 @@
 
 Have fun with Microsoft Learn!
 
-![](img/mascot-doc.png)
+[![](img/mascot-doc.png)](#)
 [Learning path for Azure Administrator](https://aka.ms/AzureAdminInfographic)
 ![](img/empty.png)
 [Azure Friday](https://channel9.msdn.com/Shows/Azure-Friday)
