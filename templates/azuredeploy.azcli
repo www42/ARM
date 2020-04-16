@@ -1,13 +1,9 @@
-# ==============================================================================
-# All ARM templates are located at public repo https://github.com/www42/s19.git
-# ==============================================================================
-
 # Login to Azure
 # --------------
 az login
 az account list -o table
 
-sub='9c5ec55f-11f8-4baf-9460-ae5f3888346e'
+sub="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 az account set --subscription $sub
 az account show
 
@@ -24,7 +20,7 @@ export location="westeurope"
 # --------------
 #   create
 export rgName="ps61-RG"
-az group create --name $rgName --location $location --tags "seminar=ps61"
+az group create --name $rgName --location $location --tags "seminar=ps-61"
 
 #   list rg
 az group list -o table
@@ -39,7 +35,7 @@ az group delete --name $rgName --yes --no-wait
 az deployment group create \
     --mode Complete \
     --resource-group $rgName \
-    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/empty.json" \
+    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/empty.json" \
     --name del01 \
     --no-wait
 
@@ -50,7 +46,7 @@ az deployment group create \
 deploymentName="mi01"
 vNet="Vnet2"
 az deployment group create  \
-    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/vnet.json" \
+    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/vnet.json" \
     --parameters vnetName=$vNet \
     --resource-group $rgName \
     --name $deploymentName
@@ -74,7 +70,7 @@ vNet="Vnet2"
 subnet="AzureBastionSubnet"
 addressPrefix="10.0.200.192/26"
 az deployment group create \
-    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/subnet.json"\
+    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/subnet.json"\
     --parameters  vnetName=$vNet \
     --parameters  subnetName=$subnet \
     --parameters  addressPrefix=$addressPrefix \
@@ -91,7 +87,7 @@ az network vnet subnet list --resource-group $rgName --vnet-name $vNet --query "
 deploymentName="mi03"
 vNet="Vnet2"
 az deployment group create \
-    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/vnet_bastion.json"\
+    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/vnet_bastion.json"\
     --parameters  vnetName=$vNet \
     --resource-group $rgName \
     --name $deploymentName
@@ -118,7 +114,7 @@ az network public-ip delete --name $bastionIp --resource-group $rgName
 #   deploy
 deploymentName="do01"
 az deployment group create \
-    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/vnet_bastion_vm.json"\
+    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/vnet_bastion_vm.json"\
     --resource-group $rgName \
     --name $deploymentName
 
@@ -140,6 +136,6 @@ az vm list --resource-group $rgName --query "[].name" -o tsv | \
 #   deploy
 deploymentName="do01"
 az deployment group create \
-    --template-uri "https://raw.githubusercontent.com/www42/s19/master/arm/ps-61.json"\
+    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/ps-61.json"\
     --resource-group $rgName \
     --name $deploymentName
