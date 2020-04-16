@@ -14,14 +14,14 @@
 
 ### My templates:
 
-| Template                                     | Purpose      |
-|----------------------------------------------|--------------|
-| [empty.json](empty.json)                     | Delete all resources in a resource group (complete mode deployment). |
-| [vnet.json](vnet.json)                       | Create Virtual Network |
-| [subnet.json](subnet.json)                   | Add Subnet to existing Virtual Network. |
-| [vnet_bastion.json](vnet_bastion.json)       | Create Virtual Network with Bastian Host. |
-| [vnet_bastion_vm.json](vnet_bastion_vm.json) | Create Virtual Network with Bastion Host and single VM. |
-| [ps-61.json](ps-61.json)                     | PS-61 Scenario: Virtual Network with Bastion Host and three VMs. |
+| Template                                               | Purpose      |
+|--------------------------------------------------------|--------------|
+| [empty.json](templates/empty.json)                     | Delete all resources in a resource group (complete mode deployment). |
+| [vnet.json](templates/vnet.json)                       | Create Virtual Network |
+| [subnet.json](templates/subnet.json)                   | Add Subnet to existing Virtual Network. |
+| [vnet_bastion.json](templates/vnet_bastion.json)       | Create Virtual Network with Bastian Host. |
+| [vnet_bastion_vm.json](templates/vnet_bastion_vm.json) | Create Virtual Network with Bastion Host and single VM. |
+| [ps-61.json](templates/ps-61.json)                     | PS-61 Scenario: Virtual Network with Bastion Host and three VMs. |
 
 [![](img/empty.png)](#)
 
