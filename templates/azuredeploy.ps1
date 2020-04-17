@@ -4,10 +4,10 @@ Connect-AzAccount
 Get-AzContext | fl
 
 
-$Location = "westeurope"
-$RgName = "RG-PS61"
+$location = "westeurope"
+$rgName = "RG-PS61"
 
-New-AzResourceGroup -Name $RgName -Location $Location
+New-AzResourceGroup -Name $rgName -Location $location
 
-$Template = "https://raw.githubusercontent.com/www42/arm/master/templates/ps-61.json"
-New-AzResourceGroupDeployment -ResourceGroupName $RgName -TemplateUri $Template
+$template = "https://raw.githubusercontent.com/www42/arm/master/templates/ps-61.json"
+New-AzResourceGroupDeployment -ResourceGroupName $rgName -TemplateUri $template
