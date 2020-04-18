@@ -19,7 +19,7 @@ export location="westeurope"
 # Resource Group
 # --------------
 #   create
-export rgName="ps61-RG"
+export rgName="PS61-RG"
 az group create --name $rgName --location $location --tags "seminar=ps-61"
 
 #   list rg
@@ -134,8 +134,9 @@ az vm list --resource-group $rgName --query "[].name" -o tsv | \
 # Template ps-61.json (Virtual Network with Bastion Host and three VMs)
 # ---------------------------------------------------------------------
 #   deploy
-deploymentName="do01"
+deploymentName="sat01"
+templateUri="https://raw.githubusercontent.com/www42/arm/master/templates/ps-61dconly.json"
 az deployment group create \
-    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/ps-61.json"\
+    --template-uri $templateUri \
     --resource-group $rgName \
     --name $deploymentName
