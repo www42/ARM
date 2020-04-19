@@ -42,7 +42,8 @@
                 },
                 "dhcpOptions": {
                     "dnsServers": [
-                        "[variables('dcVmIp')]"
+                        "[variables('dcVmIp')]",
+                        "168.63.129.16"
                     ]
                 },
                 "subnets": [
