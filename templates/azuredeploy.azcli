@@ -4,6 +4,10 @@ az login
 az account list -o table
 
 sub="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+
+# MPN subscription
+sub="0357dee8-547b-4692-9037-043a8363eb4c"
+
 az account set --subscription $sub
 az account show
 
@@ -32,11 +36,12 @@ az resource list --resource-group $rgName --query "[].{Name:name, Type:type}" -o
 az group delete --name $rgName --yes --no-wait
 
 #   remove all content of rg (template empty.json)
+deploymentName="mi01"
 az deployment group create \
     --mode Complete \
     --resource-group $rgName \
     --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/empty.json" \
-    --name del01 \
+    --name $deploymentName \
     --no-wait
 
 
@@ -134,9 +139,21 @@ az vm list --resource-group $rgName --query "[].name" -o tsv | \
 # Template ps-61.json (Virtual Network with Bastion Host and three VMs)
 # ---------------------------------------------------------------------
 #   deploy
-deploymentName="sat01"
+deploymentName="sun03"
 templateUri="https://raw.githubusercontent.com/www42/arm/master/templates/ps-61dconly.json"
 az deployment group create \
     --template-uri $templateUri \
     --resource-group $rgName \
     --name $deploymentName
+
+# Automation Account
+# ------------------
+deploymentName="sun04"
+templateUri="https://raw.githubusercontent.com/www42/arm/master/templates/automationAccount.json"
+az deployment group create \
+    --template-uri $templateUri \
+    --resource-group $rgName \
+    --name $deploymentName
+
+
+az vm extension list --resource-group $rgName --vm-name DC -o table

@@ -1,0 +1,123 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "automationAccountName": {
+           "type": "string",
+           "defaultValue": "PS61-AutomationAccount"
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('automationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiversion": "2018-01-15",
+            "location": "[variables('location')]",
+            "properties": {
+                "sku": {
+                "name": "OMS"
+                }
+            },
+            "resources": [
+                {
+                    "name": "[variables('dscResources').xActiveDirectory.name]",
+                    "type": "modules",
+                    "apiVersion": "2018-01-15",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                        "uri": "[variables('dscResources').xActiveDirectory.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscResources').xStorage.name]",
+                    "type": "modules",
+                    "apiVersion": "2018-01-15",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                        "uri": "[variables('dscResources').xStorage.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "domainCredential",
+                    "type": "credentials",
+                    "apiVersion": "2018-01-15",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "userName": "[parameters('adminUsername')]",
+                        "password": "[parameters('adminPassword')]"
+                    }
+                },
+                {
+                    "name": "safeModeCredential",
+                    "type": "credentials",
+                    "apiVersion": "2018-01-15",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]"
+                    ],
+                    "properties": {
+                        "userName": "[parameters('adminUsername')]",
+                        "password": "[parameters('safeModePassword')]"
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').DomainControllerConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2018-01-15",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscResources').xActiveDirectory.name]",
+                        "[variables('dscResources').xStorage.name]",
+                        "domainCredential",
+                        "safeModeCredential"            
+                    ],
+                    "properties": {
+                        "state": "Published",
+                        "overwrite": "true",
+                        "source": {
+                            "type": "uri",
+                            "value": "[concat(parameters('_artifactsLocation'), variables('dscConfigurations').DomainControllerConfig.script, parameters('_artifactsLocationSasToken'))]"
+                        }
+                    }
+                },
+                {
+                    "name": "[parameters('compileName')]",
+                    "type": "compilationjobs",
+                    "apiVersion": "2018-01-15",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('AutomationAccountName')]",
+                        "[variables('dscConfigurations').DomainControllerConfig.name]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
+                        },
+                        "parameters": {
+                            "configurationData": "[concat('{\"AllNodes\":{\"nodename\":\"localhost\",\"domainname\":\"', parameters('domainName'), '\"}}')]"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
