@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "automationAccountName": {
+           "type": "string",
+           "defaultValue": "PS61-AutomationAccount"
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('automationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiversion": "2018-01-15",
+            "location": "[variables('location')]",
+            "properties": {
+                "sku": {
+                "name": "OMS"
+                }
+            }
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
