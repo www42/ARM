@@ -139,7 +139,7 @@ az vm list --resource-group $rgName --query "[].name" -o tsv | \
 # Template ps-61.json (Virtual Network with Bastion Host and three VMs)
 # ---------------------------------------------------------------------
 #   deploy
-deploymentName="sun03"
+deploymentName="mon01"
 templateUri="https://raw.githubusercontent.com/www42/arm/master/templates/ps-61dconly.json"
 az deployment group create \
     --template-uri $templateUri \
