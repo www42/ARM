@@ -7,6 +7,7 @@
            "defaultValue": "PS61-AutomationAccount"
         }
     },
+    "functions": [],
     "variables": {
         "location": "[resourceGroup().location]"
     },
@@ -14,15 +15,15 @@
         {
             "name": "[parameters('automationAccountName')]",
             "type": "Microsoft.Automation/automationAccounts",
-            "apiversion": "2018-01-15",
+            "apiVersion": "2015-10-31",
             "location": "[variables('location')]",
+            "tags": {},
             "properties": {
                 "sku": {
-                "name": "OMS"
+                    "name": "Free"
                 }
             }
         }
     ],
-    "outputs": {},
-    "functions": []
+    "outputs": {}
 }
