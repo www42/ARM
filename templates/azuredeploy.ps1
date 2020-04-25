@@ -1,22 +1,30 @@
-# Login to Azure
-# --------------
 Connect-AzAccount
 Get-AzContext | fl
-
 
 $location = "westeurope"
 $rgName = "PS61-RG"
 
+Get-AzResourceGroup | ft ResourceGroupName, Location, ResourceId
 New-AzResourceGroup -Name $rgName -Location $location
-Get-AzResourceGroup 
 
-$template = "https://raw.githubusercontent.com/www42/arm/master/templates/ps-61.json"
-New-AzResourceGroupDeployment -ResourceGroupName $rgName -TemplateUri $template
 
-# DSC
-# ---
+ # DSC stuff
+# -------------------------------------------------------------------
+
+$rgName = "fo-RG"
+$template = "https://raw.githubusercontent.com/www42/arm/master/templates/automationAccount.json"
+$automationAccountName = "foo43-Automation"
+$deploymentName = "sat04"
+New-AzResourceGroupDeployment `
+    -ResourceGroupName $rgName `
+    -Name $deploymentName `
+    -TemplateUri $template `
+    -TemplateParameterObject @{automationAccountName="$automationAccountName"}
+
+
 Get-AzAutomationAccount 
-$automationAccountName = "PS61-Automation"
+Get-AzAutomationAccount | ft AutomationAccountName, ResourceGroupName, Location
+
 
 Get-AzAutomationRegistrationInfo -ResourceGroupName $rgName -AutomationAccountName $automationAccountName
 (Get-AzAutomationRegistrationInfo -ResourceGroupName $rgName -AutomationAccountName $automationAccountName).Endpoint
