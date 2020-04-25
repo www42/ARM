@@ -157,3 +157,8 @@ az deployment group create \
 
 
 az vm extension list --resource-group $rgName --vm-name DC -o table
+
+
+# Vergleiche AZ-301 T04 Mod 02 Lab  (VMs)
+#
+# Dort wird eien DSC Extension in ein Scale Set deploued mit ARM Template.
