@@ -8,22 +8,34 @@ Get-AzResourceGroup | ft ResourceGroupName, Location, ResourceId
 New-AzResourceGroup -Name $rgName -Location $location
 
 
- # DSC stuff
-# -------------------------------------------------------------------
-
-$rgName = "fo-RG"
+ 
+#--- Deploy with Template URI ----------------------------------------------------------------
 $template = "https://raw.githubusercontent.com/www42/arm/master/templates/automationAccount.json"
-$automationAccountName = "foo43-Automation"
-$deploymentName = "sat04"
+$automationAccountName = "foo-Automation"
+$deploymentName = "sun02"
+New-AzResourceGroupDeployment `
+-ResourceGroupName $rgName `
+-Name $deploymentName `
+-TemplateUri $template `
+-TemplateParameterObject @{automationAccountName="$automationAccountName"}
+
+#--- Deploy with Template File ---------------------------------------------------------------
+$file = "./templates/automationAccount.json"
+$automationAccountName = "foo2-Automation"
+$deploymentName = "sun02"
 New-AzResourceGroupDeployment `
     -ResourceGroupName $rgName `
     -Name $deploymentName `
-    -TemplateUri $template `
+    -TemplateFile $file `
     -TemplateParameterObject @{automationAccountName="$automationAccountName"}
 
+Get-AzResourceGroupDeployment -ResourceGroupName $rgName | Sort-Object Timestamp | ft DeploymentName, ProvisioningState, Timestamp
 
-Get-AzAutomationAccount 
 Get-AzAutomationAccount | ft AutomationAccountName, ResourceGroupName, Location
+
+Get-AzAutomationDscConfiguration -ResourceGroupName $rgName -AutomationAccountName $automationAccountName | ft AutomationAccountName, Name, State
+
+
 
 
 Get-AzAutomationRegistrationInfo -ResourceGroupName $rgName -AutomationAccountName $automationAccountName

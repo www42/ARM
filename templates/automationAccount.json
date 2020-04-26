@@ -25,7 +25,7 @@
             },
             "resources": [
                 {
-                    "name": "IISConfig",
+                    "name": "TestConfig",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
                     "location": "[variables('location')]",
