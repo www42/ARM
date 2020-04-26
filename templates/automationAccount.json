@@ -10,12 +10,17 @@
     "functions": [],
     "variables": {
         "location": "[resourceGroup().location]",
-        "configurationName": "TestConfig",
-        "configurationUri": "https://raw.githubusercontent.com/www42/arm/master/templates/TestConfig.ps1",
-        "dscResources": {
-            "nx": {
-                "name": "nx",
-                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/nx.1.0.0.nupkg"
+        "dscModules": {
+            "xActiveDirectory": {
+                "name": "xActiveDirectory",
+                "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.3.0.0.nupkg"
+            }
+        },
+        "dscConfigurations": {
+            "WebServerConfig": {
+                "name": "TestConfig",
+                "description": "My IIS configuration",
+                "uri": "https://raw.githubusercontent.com/www42/arm/master/templates/TestConfig.ps1"
             }
         }
     },
@@ -33,7 +38,7 @@
             },
             "resources": [
                 {
-                    "name": "[variables('configurationName')]",
+                    "name": "[variables('dscConfigurations').WebServerConfig.name]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
                     "location": "[variables('location')]",
@@ -42,10 +47,10 @@
                         "[parameters('automationAccountName')]"
                     ],
                     "properties": {
-                        "description": "My IIS configuration",
+                        "description": "[variables('dscConfigurations').WebServerConfig.description]",
                         "source": {
                             "type": "uri",
-                            "value": "[variables('configurationUri')]"
+                            "value": "[variables('dscConfigurations').WebServerConfig.uri]"
                         },
                         "state": "Published",
                         "overwrite": true,
@@ -61,17 +66,17 @@
                     "tags": {},
                     "dependsOn": [
                         "[parameters('automationAccountName')]",
-                        "[variables('configurationName')]"
+                        "[variables('dscConfigurations').WebServerConfig.name]"
                     ],
                     "properties": {
                         "configuration": {
-                            "name": "[variables('configurationName')]"
+                            "name": "[variables('dscConfigurations').WebServerConfig.name]"
                         },
                         "parameters": {}
                     }
                 },
                 {
-                    "name": "[variables('dscResources').nx.name]",
+                    "name": "[variables('dscModules').xActiveDirectory.name]",
                     "type": "modules",
                     "apiVersion": "2015-10-31",
                     "location": "[variables('location')]",
@@ -80,7 +85,7 @@
                     ],
                     "properties": {
                         "contentLink": {
-                            "uri":"[variables('dscResources').nx.url]"
+                            "uri":"[variables('dscModules').xActiveDirectory.uri]"
                         }
                     }
                 }
