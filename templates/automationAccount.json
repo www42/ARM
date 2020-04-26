@@ -9,7 +9,9 @@
     },
     "functions": [],
     "variables": {
-        "location": "[resourceGroup().location]"
+        "location": "[resourceGroup().location]",
+        "configurationName": "TestConfig",
+        "configurationUri": "https://raw.githubusercontent.com/www42/arm/master/templates/TestConfig.ps1"
     },
     "resources": [
         {
@@ -25,7 +27,7 @@
             },
             "resources": [
                 {
-                    "name": "TestConfig",
+                    "name": "[variables('configurationName')]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
                     "location": "[variables('location')]",
@@ -37,12 +39,28 @@
                         "description": "My IIS configuration",
                         "source": {
                             "type": "uri",
-                            "value": "https://raw.githubusercontent.com/www42/arm/master/templates/TestConfig.ps1"
+                            "value": "[variables('configurationUri')]"
                         },
                         "state": "Published",
                         "overwrite": true,
                         "logProgress": true,
                         "logVerbose": false,
+                        "parameters": {}
+                    }
+                },
+                {
+                    "name": "TestConfigCompile",
+                    "type": "compilationjobs",
+                    "apiVersion": "2018-01-15",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]",
+                        "[variables('configurationName')]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('configurationName')]"
+                        },
                         "parameters": {}
                     }
                 }
