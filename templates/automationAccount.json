@@ -22,29 +22,31 @@
                 "sku": {
                     "name": "Free"
                 }
-            }
-        },
-        {
-            "name": "IISConfig",
-            "type": "Microsoft.Automation/automationAccounts/configurations",
-            "apiVersion": "2015-10-31",
-            "location": "[variables('location')]",
-            "tags": {},
-            "dependsOn": [
-                "[parameters('automationAccountName')]"
-            ],
-            "properties": {
-                "description": "My IIS configuration",
-                "source": {
-                    "type": "uri",
-                    "value": "https://raw.githubusercontent.com/www42/arm/master/templates/TestConfig.ps1"
-                },
-                "state": "Published",
-                "overwrite": true,
-                "logProgress": true,
-                "logVerbose": false,
-                "parameters": {}
-            }
+            },
+            "resources": [
+                {
+                    "name": "IISConfig",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[variables('location')]",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]"
+                    ],
+                    "properties": {
+                        "description": "My IIS configuration",
+                        "source": {
+                            "type": "uri",
+                            "value": "https://raw.githubusercontent.com/www42/arm/master/templates/TestConfig.ps1"
+                        },
+                        "state": "Published",
+                        "overwrite": true,
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "parameters": {}
+                    }
+                }
+            ]
         }
     ],
     "outputs": {}
