@@ -21,8 +21,8 @@ New-AzResourceGroupDeployment `
 
 #--- Deploy with Template File ---------------------------------------------------------------
 $file = "./templates/automationAccount.json"
-$automationAccountName = "foo2-Automation"
-$deploymentName = "sun02"
+$automationAccountName = "foo4-Automation"
+$deploymentName = "sun05"
 New-AzResourceGroupDeployment `
     -ResourceGroupName $rgName `
     -Name $deploymentName `
@@ -32,9 +32,8 @@ New-AzResourceGroupDeployment `
 Get-AzResourceGroupDeployment -ResourceGroupName $rgName | Sort-Object Timestamp | ft DeploymentName, ProvisioningState, Timestamp
 
 Get-AzAutomationAccount | ft AutomationAccountName, ResourceGroupName, Location
-
 Get-AzAutomationDscConfiguration -ResourceGroupName $rgName -AutomationAccountName $automationAccountName | ft AutomationAccountName, Name, State
-
+Get-AzAutomationDscCompilationJob -ResourceGroupName $rgName -AutomationAccountName $automationAccountName
 
 
 
