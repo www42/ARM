@@ -11,8 +11,8 @@ New-AzResourceGroup -Name $rgName -Location $location
  
 #--- Deploy with Template URI ----------------------------------------------------------------
 $template = "https://raw.githubusercontent.com/www42/arm/master/templates/automationAccount.json"
-$automationAccountName = "foo-Automation"
-$deploymentName = "sun02"
+$automationAccountName = "foo9-Automation"
+$deploymentName = "sun09"
 New-AzResourceGroupDeployment `
 -ResourceGroupName $rgName `
 -Name $deploymentName `

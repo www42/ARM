@@ -22,6 +22,7 @@
             "name": "[parameters('vnetName')]",
             "apiVersion": "2018-08-01",
             "location": "[variables('location')]",
+            "tags": {},
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -36,10 +37,7 @@
                         }
                     }
                 ]
-            },
-            "tags": {
-                "seminar": "ps61"
-            }            
+            }
         }
     ],
     "outputs": {

@@ -1,48 +1,45 @@
-# Login to Azure
-# --------------
+# ---- Login to Azure ----
+az account show
+az account list --all -o table
 az login
-az account list -o table
 
 sub="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-
-# MPN subscription
-sub="0357dee8-547b-4692-9037-043a8363eb4c"
-
 az account set --subscription $sub
-az account show
 
-# Variables
-# ---------
-#   for use in a sub shell each variable has to be exported
+# ---- Variables ----
+#      for use in a sub shell each variable has to be exported
 #      export foo="bar"
 #      ^^^^^^
 #      az ... | xargs -L1 bash -c 'az ... "$foo"'
 
 export location="westeurope"
+export rgName="tel42-RG"
 
-# Resource Group
-# --------------
-#   create
-export rgName="PS61-RG"
+# ---- Resource Groups ----
 az group create --name $rgName --location $location --tags "seminar=ps-61"
-
-#   list rg
 az group list -o table
-
-#   list resources in rg
 az resource list --resource-group $rgName --query "[].{Name:name, Type:type}" -o table
-
-#   remove single rg
 az group delete --name $rgName --yes --no-wait
-
-#   remove all content of rg (template empty.json)
-deploymentName="mi01"
+#      Remove all content of resource group (template empty.json) - complete mode!
 az deployment group create \
     --mode Complete \
     --resource-group $rgName \
     --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/empty.json" \
-    --name $deploymentName \
+    --name tabulaRasa \
     --no-wait
+
+
+# ==== Deploy ARM template ========================
+template="https://raw.githubusercontent.com/www42/arm/master/templates/vnet.json"
+
+az deployment group create \
+    --name tel42-01 \
+    --template-uri $template \
+    --resource-group $rgName \
+    --parameters vnetName=tel42-VNet 
+#
+# =================================================
+
 
 
 # Template vnet.json (Virtual Network)
