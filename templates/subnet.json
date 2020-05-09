@@ -12,7 +12,8 @@
            "type": "string",
            "metadata": {
                "description": "Name of subnet to add."
-           }
+           },
+           "defaultValue": "subnet42"
         },
         "addressPrefix": {
            "type": "string",

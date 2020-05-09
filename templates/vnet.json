@@ -4,36 +4,44 @@
     "parameters": {
         "vnetName": {
            "type": "string",
-           "metadata": {
-                "description": "Name of the virtual network."
-            },
             "defaultValue": "Vnet1"
+        },
+        "vnetAddressSpace": {
+           "type": "string",
+           "defaultValue": "10.0.0.0/16"
+        },
+        "subnetName": {
+           "type": "string",
+           "defaultValue": "Subnet1"
+        },
+        "subnetAddressPrefix": {
+           "type": "string",
+           "defaultValue": "10.0.0.0/24"
+        },
+        "location": {
+           "type": "string",
+           "defaultValue": "[resourceGroup().location]"
         }
     },
-    "variables": {
-        "location": "[resourceGroup().location]",
-        "vnetAddressSpace": "10.0.0.0/16",
-        "subnetName": "default",
-        "subnetAddressPrefix": "10.0.0.0/24"
-    },
+    "variables": {},
     "resources": [
         {
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[parameters('vnetName')]",
             "apiVersion": "2018-08-01",
-            "location": "[variables('location')]",
+            "location": "[parameters('location')]",
             "tags": {},
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[variables('vnetAddressSpace')]"
+                        "[parameters('vnetAddressSpace')]"
                     ]
                 },
                 "subnets": [
                     {
-                        "name": "[variables('subnetName')]",
+                        "name": "[parameters('subnetName')]",
                         "properties": {
-                            "addressPrefix": "[variables('subnetAddressPrefix')]"
+                            "addressPrefix": "[parameters('subnetAddressPrefix')]"
                         }
                     }
                 ]
