@@ -12,7 +12,7 @@
         },
         "subnetName": {
            "type": "string",
-           "defaultValue": "Subnet1"
+           "defaultValue": "Subnet0"
         },
         "subnetAddressPrefix": {
            "type": "string",

@@ -4,23 +4,15 @@
     "parameters": {
         "vnetName": {
            "type": "string",
-           "metadata": {
-                "description": "Name of existing virtual network."
-            }
+           "defaultValue": "Vnet1"
         },
         "subnetName": {
            "type": "string",
-           "metadata": {
-               "description": "Name of subnet to add."
-           },
-           "defaultValue": "subnet42"
+           "defaultValue": "Subnet1"
         },
-        "addressPrefix": {
+        "subnetAddressPrefix": {
            "type": "string",
-           "metadata": {
-                "description": "Address prefix of subnet to add"
-            },
-            "defaultValue": "10.0.42.0/24"
+            "defaultValue": "10.0.1.0/24"
         }
     },
     "variables": {},
@@ -30,7 +22,7 @@
             "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
             "apiVersion": "2019-12-01",
             "properties": {
-                "addressPrefix": "[parameters('addressPrefix')]"
+                "AddressPrefix": "[parameters('subnetAddressPrefix')]"
             }
         }
     ],

@@ -47,9 +47,7 @@
                     }
                 ]
             },
-            "tags": {
-                "seminar": "ps61"
-            }            
+            "tags": {}
         },
         {
             "type": "Microsoft.Network/publicIPAddresses",
@@ -62,9 +60,7 @@
             "properties": {
                 "publicIPAllocationMethod": "Static"
             },
-            "tags": {
-                "seminar": "ps61"
-            }
+            "tags": {}
         },
         {
             "type": "Microsoft.Network/bastionHosts",
@@ -91,9 +87,7 @@
                     }
                 ]
             },
-            "tags": {
-                "seminar": "ps61"
-            }
+            "tags": {}
         }
     ],
     "outputs": {},
