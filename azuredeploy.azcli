@@ -12,7 +12,7 @@ az account set --subscription $sub
 #           az ... | xargs -L1 bash -c 'az ... "$foo"'
 
 templateRoot="https://raw.githubusercontent.com/www42/arm/master/templates"
-export rgName="tel42-RG"
+export rgName="mom-RG"
 
 # ---- Resource Groups ----
 az group create --name $rgName --location westeurope
@@ -37,7 +37,7 @@ subnetName="Subnet0"                # "defaultValue": "Subnet0"
 subnetAddressPrefix="10.0.0.0/24"   # "defaultValue": "10.0.0.0/24"
 location=$(az group show --name $rgName --query location --output tsv)   # "defaultValue": "[resourceGroup().location]"
 
-deploymentName="tel42-04"
+deploymentName="mom-01"
 az deployment group create \
     --name $deploymentName \
     --template-uri $template \
@@ -45,7 +45,10 @@ az deployment group create \
     --parameters vnetName=$vnetName \
     --parameters vnetAddressSpace=$vnetAddressSpace \
     --parameters subnetName=$subnetName \
-    --parameters subnetAddressPrefix=$subnetAddressPrefix 
+    --parameters subnetAddressPrefix=$subnetAddressPrefix \
+    --parameters location=$location 
+#
+az deployment group create  --name $deploymentName  --template-file templates/vnetWithoutSubnet.json --resource-group $rgName 
 #
 az network vnet list --resource-group $rgName -o table
 az network vnet delete --name $vnetName --resource-group $rgName
@@ -60,45 +63,88 @@ vnetName="VNet1"                    # "defaultValue": "Vnet1"
 subnetName="Subnet1"                # "defaultValue": "Subnet1"
 subnetAddressPrefix="10.0.1.0/24"   # "defaultValue": "10.0.1.0/24"
 
+deploymentName="mom-02"
+az deployment group create \
+    --name $deploymentName \
+    --template-uri $template \
+    --resource-group $rgName \
+    --parameters vnetName=$vnetName \
+    --parameters subnetName=$subnetName \
+    --parameters subnetAddressPrefix=$subnetAddressPrefix 
+#
+
 az network vnet subnet list --resource-group $rgName --vnet-name $vnetName --query "[].{Name:name,Prefix:addressPrefix}" -o table
 
 
-# Template vnet_bastion.json (Virtual Network with Bastion Host)
-# --------------------------------------------------------------
-#   deploy
-deploymentName="mi03"
-vNet="Vnet2"
+# ==== Virtual Network with Bastion Host ==========
+template="$templateRoot/vnet_bastion.json"
+
+vnetName="Vnet2"                                # "defaultValue": "Vnet1"
+vnetAddressSpace="10.0.0.0/16"                  # "defaultValue": "10.0.0.0/16"
+subnetName="Subnet0"                            # "defaultValue": "Subnet0"
+subnetAddressPrefix="10.0.0.0/24"               # "defaultValue": "10.0.0.0/24"
+bastionHostName="$vnetName-Bastion"             # "defaultValue": "[concat(parameters('vnetName'),'-Bastion')]"
+bastionHostIpAddressName="$bastionHostName-Ip"  # "defaultValue": "[concat(parameters('bastionHostName'),'-Ip')]"
+bastionSubnetName="AzureBastionSubnet"          # "defaultValue": "AzureBastionSubnet"
+bastionSubnetAddressPrefix="10.0.255.32/27"     # "defaultValue": "10.0.255.32/27"
+location=$(az group show --name $rgName --query location --output tsv)   # "defaultValue": "[resourceGroup().location]"
+
+deploymentName="mom-03"
 az deployment group create \
-    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/vnet_bastion.json"\
-    --parameters  vnetName=$vnetName \
+    --name $deploymentName \
+    --template-uri $template \
     --resource-group $rgName \
-    --name $deploymentName
+    --parameters vnetName=$vnetName \
+    --parameters vnetAddressSpace=$vnetAddressSpace \
+    --parameters subnetName=$subnetName \
+    --parameters subnetAddressPrefix=$subnetAddressPrefix \
+    --parameters bastionHostName=$bastionHostName \
+    --parameters bastionHostIpAddressName=$bastionHostIpAddressName \
+    --parameters bastionSubnetName=$bastionSubnetName \
+    --parameters bastionSubnetAddressPrefix=$bastionSubnetAddressPrefix \
+    --parameters location=$location 
+#
 
-
-bastion="$vnetName-Bastion"
-bastionIp="$bastionHost-Ip"
-#   list bastion
 az network bastion list --query "[].{Name:name, Location:location, resourceGroup:resourceGroup}" -o table
-
-#   remove single bastion
 az network bastion delete --name $bastion --resource-group $rgName
-
-#   list public ip
 az network public-ip list -o table
-
-#   remove single public ip
 az network public-ip delete --name $bastionIp --resource-group $rgName
 
 
 
-# Template vnet_bastion_vm.json (Virtual Network with Bastion Host and single VM)
-# -------------------------------------------------------------------------------
-#   deploy
-deploymentName="do01"
+# ==== Virtual Network with Bastion Host and single VM ====
+template="$templateRoot/vnet_bastion_vm.json"
+
+vnetName="Vnet4"                                # "defaultValue": "Vnet1"
+vnetAddressSpace="10.0.0.0/16"                  # "defaultValue": "10.0.0.0/16"
+subnetName="Subnet0"                            # "defaultValue": "Subnet0"
+subnetAddressPrefix="10.0.0.0/24"               # "defaultValue": "10.0.0.0/24"
+bastionHostName="$vnetName-Bastion"             # "defaultValue": "[concat(parameters('vnetName'),'-Bastion')]"
+bastionHostIpAddressName="$bastionHostName-Ip"  # "defaultValue": "[concat(parameters('bastionHostName'),'-Ip')]"
+bastionSubnetName="AzureBastionSubnet"          # "defaultValue": "AzureBastionSubnet"
+bastionSubnetAddressPrefix="10.0.255.32/27"     # "defaultValue": "10.0.255.32/27"
+VmName="SVR1"                                   # "defaultValue": "SVR1"
+vmSize="Standard_F2s_v2"                        # "defaultValue": "Standard_F2s_v2"
+VmIp="10.0.0.201"                               # "defaultValue": "10.0.0.201"
+adminUserName="Student"                         # "defaultValue": "Student"
+adminPassword="Pa55w.rd1234"                    # "defaultValue": "Pa55w.rd1234"
+location=$(az group show --name $rgName --query location --output tsv)   # "defaultValue": "[resourceGroup().location]"
+
+deploymentName="mom-04"
 az deployment group create \
-    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/vnet_bastion_vm.json" \
+    --name $deploymentName \
+    --template-uri $template \
     --resource-group $rgName \
-    --name $deploymentName
+    --parameters vnetName=$vnetName \
+    --parameters vnetAddressSpace=$vnetAddressSpace \
+    --parameters subnetName=$subnetName \
+    --parameters subnetAddressPrefix=$subnetAddressPrefix \
+    --parameters bastionHostName=$bastionHostName \
+    --parameters bastionHostIpAddressName=$bastionHostIpAddressName \
+    --parameters bastionSubnetName=$bastionSubnetName \
+    --parameters bastionSubnetAddressPrefix=$bastionSubnetAddressPrefix \
+    --parameters location=$location 
+#
 
 #    list vm
 az vm list --resource-group $rgName --show-details -o table
