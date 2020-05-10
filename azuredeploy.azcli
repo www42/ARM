@@ -143,17 +143,16 @@ az deployment group create \
     --parameters bastionHostIpAddressName=$bastionHostIpAddressName \
     --parameters bastionSubnetName=$bastionSubnetName \
     --parameters bastionSubnetAddressPrefix=$bastionSubnetAddressPrefix \
+    --parameters VmName=$VmName \
+    --parameters vmSize=$vmSize \
+    --parameters VmIp=$VmIp \
+    --parameters adminUserName=$adminUserName \
+    --parameters adminPassword=$adminPassword \
     --parameters location=$location 
 #
-
-#    list vm
 az vm list --resource-group $rgName --show-details -o table
-
-#    stop single vm
-vmName="SVR1"
 az vm deallocate --name $vmName --resource-group $rgName
-
-#    stop all vm in rg
+#     stop all vm in rg
 az vm list --resource-group $rgName --query "[].name" -o tsv | \
     xargs -L1 bash -c 'az vm deallocate --name $0 --resource-group "$rgName"'
 
@@ -161,27 +160,10 @@ az vm list --resource-group $rgName --query "[].name" -o tsv | \
 
 # Template ps-61.json (Virtual Network with Bastion Host and three VMs)
 # ---------------------------------------------------------------------
-#   deploy
-deploymentName="mon01"
-templateUri="https://raw.githubusercontent.com/www42/arm/master/templates/ps-61dconly.json"
-az deployment group create \
-    --template-uri $templateUri \
-    --resource-group $rgName \
-    --name $deploymentName
+template="$templateRoot/ps-61dconly.json"
 
 # Automation Account
 # ------------------
-deploymentName="sun04"
-templateUri="https://raw.githubusercontent.com/www42/arm/master/templates/automationAccount.json"
-az deployment group create \
-    --template-uri $templateUri \
-    --resource-group $rgName \
-    --name $deploymentName
-
+template="$templateRoot/automationAccount.json"
 
 az vm extension list --resource-group $rgName --vm-name DC -o table
-
-
-# Vergleiche AZ-301 T04 Mod 02 Lab  (VMs)
-#
-# Dort wird eien DSC Extension in ein Scale Set deploued mit ARM Template.
