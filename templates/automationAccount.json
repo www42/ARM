@@ -19,7 +19,7 @@
             "WebServerConfig": {
                 "name": "TestConfig",
                 "description": "My IIS configuration",
-                "uri": "https://raw.githubusercontent.com/www42/arm/master/templates/TestConfig.ps1"
+                "uri": "https://raw.githubusercontent.com/www42/arm/master/dscConfigs/TestConfig.ps1"
             }
         }
     },
