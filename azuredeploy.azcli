@@ -12,14 +12,14 @@ az account set --subscription $sub
 #           az ... | xargs -L1 bash -c 'az ... "$foo"'
 
 templateRoot="https://raw.githubusercontent.com/www42/arm/master/templates"
-export rgName="mom-RG"
+export rgName="rain-RG"
 
 # ---- Resource Groups ----
-az group create --name $rgName --location westeurope
 az group list -o table
+az group create --name $rgName --location westeurope
 az resource list --resource-group $rgName --query "[].{Name:name, Type:type}" -o table
 az group delete --name $rgName --yes --no-wait
-#      Remove all content of resource group (template empty.json) - complete mode!
+# Remove all content of resource group (template empty.json) - complete mode!
 az deployment group create \
     --mode Complete \
     --resource-group $rgName \
@@ -30,6 +30,7 @@ az deployment group create \
 
 # ==== Virtual Network ============================
 template="$templateRoot/vnet.json"
+parameters="$templateRoot/vnet.parameters.json"
 
 vnetName="Vnet1"                    # "defaultValue": "Vnet1"
 vnetAddressSpace="10.0.0.0/16"      # "defaultValue": "10.0.0.0/16"
@@ -37,11 +38,12 @@ subnetName="Subnet0"                # "defaultValue": "Subnet0"
 subnetAddressPrefix="10.0.0.0/24"   # "defaultValue": "10.0.0.0/24"
 location=$(az group show --name $rgName --query location --output tsv)   # "defaultValue": "[resourceGroup().location]"
 
-deploymentName="mom-01"
+deploymentName="rain-01"
 az deployment group create \
     --name $deploymentName \
     --template-uri $template \
     --resource-group $rgName \
+    --parameters $parameters \
     --parameters vnetName=$vnetName \
     --parameters vnetAddressSpace=$vnetAddressSpace \
     --parameters subnetName=$subnetName \

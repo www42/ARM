@@ -22,14 +22,6 @@
            "type": "string",
            "defaultValue": "[concat(parameters('vnetName'),'-Bastion')]"
         },
-        "bastionHostIpAddressName": {
-           "type": "string",
-           "defaultValue": "[concat(parameters('bastionHostName'),'-Ip')]"
-        },
-        "bastionSubnetName": {
-           "type": "string",
-           "defaultValue": "AzureBastionSubnet"
-        },
         "bastionSubnetAddressPrefix": {
            "type": "string",
            "defaultValue": "10.0.255.32/27"
@@ -39,7 +31,10 @@
            "defaultValue": "[resourceGroup().location]"
         }
     },
-    "variables": {},
+    "variables": {
+        "bastionSubnetName": "AzureBastionSubnet",
+        "bastionHostIpAddressName": "[concat(parameters('bastionHostName'),'-Ip')]"
+    },
     "resources": [
         {
             "type": "Microsoft.Network/virtualNetworks",
@@ -60,7 +55,7 @@
                         }
                     },
                     {
-                        "name": "[parameters('bastionSubnetName')]",
+                        "name": "[variables('bastionSubnetName')]",
                         "properties": {
                             "addressPrefix": "[parameters('bastionSubnetAddressPrefix')]"
                         }
@@ -71,7 +66,7 @@
         },
         {
             "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[parameters('bastionHostIpAddressName')]",
+            "name": "[variables('bastionHostIpAddressName')]",
             "apiVersion": "2019-02-01",
             "location": "[parameters('location')]",
             "sku": {
@@ -88,7 +83,7 @@
             "name": "[parameters('bastionHostName')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIpAddresses', parameters('bastionHostIpAddressName'))]",
+                "[resourceId('Microsoft.Network/publicIpAddresses', variables('bastionHostIpAddressName'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
             ],
             "properties": {
@@ -97,10 +92,10 @@
                         "name": "IpConf",
                         "properties": {
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('bastionHostIpAddressName'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('bastionHostIpAddressName'))]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('bastionSubnetName'))]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('bastionSubnetName'))]"
                             }
 
                         }
