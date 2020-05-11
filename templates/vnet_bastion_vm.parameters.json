@@ -14,9 +14,6 @@
         "subnetAddressPrefix": {
             "value": "10.0.0.0/24"
         },
-        "bastionHostName": {
-            "value": "[concat(parameters('vnetName'),'-Bastion')]"
-         },
          "bastionSubnetAddressPrefix": {
             "value": "10.0.255.32/27"
         },
