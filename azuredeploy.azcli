@@ -174,7 +174,14 @@ template="$templateRoot/ps-61dconly.json"
 # ------------------
 template="$templateRoot/automationAccount.json"
 parameters="$templateRoot/automationAccount.parameters.json"
-az deployment group create --name rain-03 --resource-group $rgName --template-uri $template --parameters $parameters --parameters automationAccountName="foo-Automation"
+az deployment group create --name rain-07 --resource-group $rgName --template-uri $template --parameters $parameters
 
-az 
+# ==== Dagmar - DC (without Bastion, without VNet)
+az deployment group create --name rain-06 --resource-group $rgName --template-file templates/dagmar.json --parameters templates/dagmar.parameters.json
+
 az vm extension list --resource-group $rgName --vm-name DC -o table
+
+az deployment group create --name rain-08 --resource-group $rgName --template-file templates/vnet_bastion.json 
+az deployment group create --name rain-10 --resource-group $rgName --template-file templates/dagmar.json
+az deployment group create --name rain-11 --resource-group $rgName --template-file templates/automationAccount.json
+az deployment group create --name rain-12 --resource-group $rgName --template-file templates/vm.json
