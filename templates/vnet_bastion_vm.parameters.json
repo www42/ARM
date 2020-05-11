@@ -19,6 +19,24 @@
         },
         "bastionSubnetAddressPrefix": {
             "value": "10.0.255.32/27"
+        },
+        "VmName": {
+            "value": "SVR1"
+        },
+        "vmSize": {
+            "value": "Standard_F2s_v2"
+        },
+        "VmIp": {
+            "value": "10.0.0.201"
+        },
+        "adminUserName": {
+            "value": "Student"
+        },
+        "adminPassword": {
+            "value": "Pa55w.rd1234"
+        },
+        "location": {
+            "value": "[resourceGroup().location]"
         }
     }
 }

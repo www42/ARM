@@ -60,6 +60,7 @@ az network vnet list --resource-group $rgName --query "[]".name --output tsv | \
 
 # ==== Subnet =====================================
 template="$templateRoot/subnet.json"
+parameters="$templateRoot/subnet.json"
 
 vnetName="VNet1"                    # "defaultValue": "Vnet1"
 subnetName="Subnet1"                # "defaultValue": "Subnet1"
@@ -70,6 +71,7 @@ az deployment group create \
     --name $deploymentName \
     --template-uri $template \
     --resource-group $rgName \
+    --parameters $parameters \
     --parameters vnetName=$vnetName \
     --parameters subnetName=$subnetName \
     --parameters subnetAddressPrefix=$subnetAddressPrefix 
@@ -80,6 +82,7 @@ az network vnet subnet list --resource-group $rgName --vnet-name $vnetName --que
 
 # ==== Virtual Network with Bastion Host ==========
 template="$templateRoot/vnet_bastion.json"
+parameters="$templateRoot/vnet_bastion.json"
 
 vnetName="Vnet2"                                # "defaultValue": "Vnet1"
 vnetAddressSpace="10.0.0.0/16"                  # "defaultValue": "10.0.0.0/16"
@@ -96,6 +99,7 @@ az deployment group create \
     --name $deploymentName \
     --template-uri $template \
     --resource-group $rgName \
+    --parameters $parameters \
     --parameters vnetName=$vnetName \
     --parameters vnetAddressSpace=$vnetAddressSpace \
     --parameters subnetName=$subnetName \
@@ -116,6 +120,7 @@ az network public-ip delete --name $bastionIp --resource-group $rgName
 
 # ==== Virtual Network with Bastion Host and single VM ====
 template="$templateRoot/vnet_bastion_vm.json"
+parameters="$templateRoot/vnet_bastion_vm.json"
 
 vnetName="Vnet4"                                # "defaultValue": "Vnet1"
 vnetAddressSpace="10.0.0.0/16"                  # "defaultValue": "10.0.0.0/16"
@@ -132,11 +137,12 @@ adminUserName="Student"                         # "defaultValue": "Student"
 adminPassword="Pa55w.rd1234"                    # "defaultValue": "Pa55w.rd1234"
 location=$(az group show --name $rgName --query location --output tsv)   # "defaultValue": "[resourceGroup().location]"
 
-deploymentName="mom-04"
+deploymentName="rain-02"
 az deployment group create \
     --name $deploymentName \
     --template-uri $template \
     --resource-group $rgName \
+    --parameters $parameters \
     --parameters vnetName=$vnetName \
     --parameters vnetAddressSpace=$vnetAddressSpace \
     --parameters subnetName=$subnetName \
