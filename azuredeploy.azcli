@@ -120,7 +120,7 @@ az network public-ip delete --name $bastionIp --resource-group $rgName
 
 # ==== Virtual Network with Bastion Host and single VM ====
 template="$templateRoot/vnet_bastion_vm.json"
-parameters="$templateRoot/vnet_bastion_vm.json"
+parameters="$templateRoot/vnet_bastion_vm.parameters.json"
 
 vnetName="Vnet4"                                # "defaultValue": "Vnet1"
 vnetAddressSpace="10.0.0.0/16"                  # "defaultValue": "10.0.0.0/16"
@@ -173,5 +173,7 @@ template="$templateRoot/ps-61dconly.json"
 # Automation Account
 # ------------------
 template="$templateRoot/automationAccount.json"
+parameters="$templateRoot/automationAccount.parameters.json"
+az deployment group create --name rain-03 --resource-group $rgName --template-uri $template --parameters $parameters --parameters automationAccountName=foo-Automation
 
 az vm extension list --resource-group $rgName --vm-name DC -o table

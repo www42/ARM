@@ -7,15 +7,6 @@
         },
         "vnetAddressSpace": {
             "value": "10.0.0.0/16"
-        },
-        "subnetName": {
-            "value": "Subnet0"
-        },
-        "subnetAddressPrefix": {
-            "value": "10.0.0.0/24"
-        },
-        "bastionSubnetAddressPrefix": {
-            "value": "10.0.255.32/27"
         }
     }
 }

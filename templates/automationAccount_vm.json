@@ -7,7 +7,6 @@
            "defaultValue": "PS61-AutomationAccount"
         }
     },
-    "functions": [],
     "variables": {
         "location": "[resourceGroup().location]",
         "dscModules": {
@@ -90,51 +89,8 @@
                     }
                 }
             ]
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('VMName')]",
-            "apiVersion": "2017-12-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-              "[parameters('automationAccountName')]"
-            ],
-            "properties": {
-              "hardwareProfile": {
-                "vmSize": "[parameters('VMSize')]"
-              },
-              "osProfile": {
-                "computerName": "[parameters('VMName')]",
-                "adminUsername": "[parameters('adminUsername')]",
-                "adminPassword": "[parameters('adminPassword')]"
-              },
-              "storageProfile": {
-                "imageReference": {
-                  "publisher": "MicrosoftWindowsServer",
-                  "offer": "WindowsServer",
-                  "sku": "2016-Datacenter-Server-Core",
-                  "version": "latest"
-                },
-                "osDisk": {
-                  "createOption": "FromImage"
-                },
-                "dataDisks": [
-                  {
-                    "createOption": "Empty",
-                    "diskSizeGB": 100,
-                    "lun": 0
-                  }
-                ]
-              },
-              "networkProfile": {
-                "networkInterfaces": [
-                  {
-                    "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('NicName'))]"
-                  }
-                ]
-              }
-            }
-        }       
+        }
     ],
+    "functions": [],
     "outputs": {}
 }
