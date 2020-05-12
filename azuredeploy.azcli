@@ -11,8 +11,8 @@ az account set --subscription $sub
 #           export foo="bar"
 #           az ... | xargs -L1 bash -c 'az ... "$foo"'
 
+export rgName="tue-RG"
 templateRoot="https://raw.githubusercontent.com/www42/arm/master/templates"
-export rgName="rain-RG"
 
 # ---- Resource Groups ----
 az group list -o table
@@ -28,160 +28,17 @@ az deployment group create \
     --no-wait
 
 
-# ==== Virtual Network ============================
-template="$templateRoot/vnet.json"
-parameters="$templateRoot/vnet.parameters.json"
+# ---- Deployments ----
+az deployment group create --name tue-09 --resource-group $rgName --template-file templates/VM.json --parameters templates/VM.parameters.json
 
-vnetName="Vnet1"                    # "defaultValue": "Vnet1"
-vnetAddressSpace="10.0.0.0/16"      # "defaultValue": "10.0.0.0/16"
-subnetName="Subnet0"                # "defaultValue": "Subnet0"
-subnetAddressPrefix="10.0.0.0/24"   # "defaultValue": "10.0.0.0/24"
-location=$(az group show --name $rgName --query location --output tsv)   # "defaultValue": "[resourceGroup().location]"
+az deployment group list --resource-group $rgName --query "sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp)" --output table
 
-deploymentName="rain-01"
-az deployment group create \
-    --name $deploymentName \
-    --template-uri $template \
-    --resource-group $rgName \
-    --parameters $parameters \
-    --parameters vnetName=$vnetName \
-    --parameters vnetAddressSpace=$vnetAddressSpace \
-    --parameters subnetName=$subnetName \
-    --parameters subnetAddressPrefix=$subnetAddressPrefix \
-    --parameters location=$location 
-#
-az deployment group create  --name $deploymentName  --template-file templates/vnetWithoutSubnet.json --resource-group $rgName 
-#
-az network vnet list --resource-group $rgName -o table
-az network vnet delete --name $vnetName --resource-group $rgName
-az network vnet list --resource-group $rgName --query "[]".name --output tsv | \
-    xargs -L1 bash -c 'az network vnet delete --name $0 --resource-group "$rgName"'
-
-
-# ==== Subnet =====================================
-template="$templateRoot/subnet.json"
-parameters="$templateRoot/subnet.json"
-
-vnetName="VNet1"                    # "defaultValue": "Vnet1"
-subnetName="Subnet1"                # "defaultValue": "Subnet1"
-subnetAddressPrefix="10.0.1.0/24"   # "defaultValue": "10.0.1.0/24"
-
-deploymentName="mom-02"
-az deployment group create \
-    --name $deploymentName \
-    --template-uri $template \
-    --resource-group $rgName \
-    --parameters $parameters \
-    --parameters vnetName=$vnetName \
-    --parameters subnetName=$subnetName \
-    --parameters subnetAddressPrefix=$subnetAddressPrefix 
-#
-
-az network vnet subnet list --resource-group $rgName --vnet-name $vnetName --query "[].{Name:name,Prefix:addressPrefix}" -o table
-
-
-# ==== Virtual Network with Bastion Host ==========
-template="$templateRoot/vnet_bastion.json"
-parameters="$templateRoot/vnet_bastion.json"
-
-vnetName="Vnet2"                                # "defaultValue": "Vnet1"
-vnetAddressSpace="10.0.0.0/16"                  # "defaultValue": "10.0.0.0/16"
-subnetName="Subnet0"                            # "defaultValue": "Subnet0"
-subnetAddressPrefix="10.0.0.0/24"               # "defaultValue": "10.0.0.0/24"
-bastionHostName="$vnetName-Bastion"             # "defaultValue": "[concat(parameters('vnetName'),'-Bastion')]"
-bastionHostIpAddressName="$bastionHostName-Ip"  # "defaultValue": "[concat(parameters('bastionHostName'),'-Ip')]"
-bastionSubnetName="AzureBastionSubnet"          # "defaultValue": "AzureBastionSubnet"
-bastionSubnetAddressPrefix="10.0.255.32/27"     # "defaultValue": "10.0.255.32/27"
-location=$(az group show --name $rgName --query location --output tsv)   # "defaultValue": "[resourceGroup().location]"
-
-deploymentName="mom-03"
-az deployment group create \
-    --name $deploymentName \
-    --template-uri $template \
-    --resource-group $rgName \
-    --parameters $parameters \
-    --parameters vnetName=$vnetName \
-    --parameters vnetAddressSpace=$vnetAddressSpace \
-    --parameters subnetName=$subnetName \
-    --parameters subnetAddressPrefix=$subnetAddressPrefix \
-    --parameters bastionHostName=$bastionHostName \
-    --parameters bastionHostIpAddressName=$bastionHostIpAddressName \
-    --parameters bastionSubnetName=$bastionSubnetName \
-    --parameters bastionSubnetAddressPrefix=$bastionSubnetAddressPrefix \
-    --parameters location=$location 
-#
-
+az network vnet subnet list --resource-group $rgName --vnet-name VNet1 --query "[].{Name:name,Prefix:addressPrefix}" -o table
 az network bastion list --query "[].{Name:name, Location:location, resourceGroup:resourceGroup}" -o table
-az network bastion delete --name $bastion --resource-group $rgName
 az network public-ip list -o table
-az network public-ip delete --name $bastionIp --resource-group $rgName
-
-
-
-# ==== Virtual Network with Bastion Host and single VM ====
-template="$templateRoot/vnet_bastion_vm.json"
-parameters="$templateRoot/vnet_bastion_vm.parameters.json"
-
-vnetName="Vnet4"                                # "defaultValue": "Vnet1"
-vnetAddressSpace="10.0.0.0/16"                  # "defaultValue": "10.0.0.0/16"
-subnetName="Subnet0"                            # "defaultValue": "Subnet0"
-subnetAddressPrefix="10.0.0.0/24"               # "defaultValue": "10.0.0.0/24"
-bastionHostName="$vnetName-Bastion"             # "defaultValue": "[concat(parameters('vnetName'),'-Bastion')]"
-bastionHostIpAddressName="$bastionHostName-Ip"  # "defaultValue": "[concat(parameters('bastionHostName'),'-Ip')]"
-bastionSubnetName="AzureBastionSubnet"          # "defaultValue": "AzureBastionSubnet"
-bastionSubnetAddressPrefix="10.0.255.32/27"     # "defaultValue": "10.0.255.32/27"
-VmName="SVR1"                                   # "defaultValue": "SVR1"
-vmSize="Standard_F2s_v2"                        # "defaultValue": "Standard_F2s_v2"
-VmIp="10.0.0.201"                               # "defaultValue": "10.0.0.201"
-adminUserName="Student"                         # "defaultValue": "Student"
-adminPassword="Pa55w.rd1234"                    # "defaultValue": "Pa55w.rd1234"
-location=$(az group show --name $rgName --query location --output tsv)   # "defaultValue": "[resourceGroup().location]"
-
-deploymentName="rain-02"
-az deployment group create \
-    --name $deploymentName \
-    --template-uri $template \
-    --resource-group $rgName \
-    --parameters $parameters \
-    --parameters vnetName=$vnetName \
-    --parameters vnetAddressSpace=$vnetAddressSpace \
-    --parameters subnetName=$subnetName \
-    --parameters subnetAddressPrefix=$subnetAddressPrefix \
-    --parameters bastionHostName=$bastionHostName \
-    --parameters bastionHostIpAddressName=$bastionHostIpAddressName \
-    --parameters bastionSubnetName=$bastionSubnetName \
-    --parameters bastionSubnetAddressPrefix=$bastionSubnetAddressPrefix \
-    --parameters VmName=$VmName \
-    --parameters vmSize=$vmSize \
-    --parameters VmIp=$VmIp \
-    --parameters adminUserName=$adminUserName \
-    --parameters adminPassword=$adminPassword \
-    --parameters location=$location 
-#
 az vm list --resource-group $rgName --show-details -o table
-az vm deallocate --name $vmName --resource-group $rgName
-#     stop all vm in rg
+# stop all vm in rg
 az vm list --resource-group $rgName --query "[].name" -o tsv | \
     xargs -L1 bash -c 'az vm deallocate --name $0 --resource-group "$rgName"'
 
-
-
-# Template ps-61.json (Virtual Network with Bastion Host and three VMs)
-# ---------------------------------------------------------------------
-template="$templateRoot/ps-61dconly.json"
-
-# Automation Account
-# ------------------
-template="$templateRoot/automationAccount.json"
-parameters="$templateRoot/automationAccount.parameters.json"
-az deployment group create --name rain-07 --resource-group $rgName --template-uri $template --parameters $parameters
-
-# ==== Dagmar - DC (without Bastion, without VNet)
-az deployment group create --name rain-06 --resource-group $rgName --template-file templates/dagmar.json --parameters templates/dagmar.parameters.json
-
 az vm extension list --resource-group $rgName --vm-name DC -o table
-
-az deployment group create --name rain-08 --resource-group $rgName --template-file templates/vnet_bastion.json 
-az deployment group create --name rain-10 --resource-group $rgName --template-file templates/dagmar.json
-az deployment group create --name rain-11 --resource-group $rgName --template-file templates/automationAccount.json
-az deployment group create --name rain-12 --resource-group $rgName --template-file templates/vm.json
