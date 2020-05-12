@@ -3,16 +3,14 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmName": {
-           "type": "string",
-           "defaultValue": "DC"
+           "type": "string"
         },
         "vmSize": {
            "type": "string",
-            "defaultValue": "Standard_F2s_v2"
+           "defaultValue": "Standard_F2s_v2"
         },
         "vmIp": {
-           "type": "string",
-           "defaultValue": "10.0.0.200"
+           "type": "string"
         },
         "adminUserName": {
            "type": "string",
@@ -22,7 +20,7 @@
            "type": "string",
            "defaultValue": "Pa55w.rd1234"
         },
-        "vnetName": {
+        "virtualNetworkName": {
            "type": "string",
             "defaultValue": "Vnet1"
         },
@@ -32,7 +30,7 @@
         },
         "automationAccountName": {
            "type": "string",
-           "defaultValue": "PS61-AutomationAccount"
+           "defaultValue": "PS61-Automation"
         },
         "nodeConfigurationName": {
            "type": "string",
@@ -43,6 +41,7 @@
            "defaultValue": "[resourceGroup().location]"
         }
     },
+    "functions": [],
     "variables": {
         "vmNetworkInterfaceName": "[concat(parameters('vmName'), '-Nic')]",
         "vmOsDiskName": "[concat(parameters('vmName'), '-Disk')]",
@@ -62,7 +61,7 @@
                            "privateIPAllocationMethod": "Static",
                            "privateIPAddress": "[parameters('vmIp')]",
                            "subnet": {
-                               "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+                               "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
                            }
                        }
                    }
@@ -165,7 +164,6 @@
                 }
             }
         }
-   ],
-    "outputs": {},
-    "functions": []
+    ],
+    "outputs": {}
 }
