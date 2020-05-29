@@ -1,7 +1,8 @@
 # ---- Login to Azure ----
 az account show
 az account list --all -o table
-az login
+az login 
+az logout
 
 sub="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 az account set --subscription $sub
@@ -11,7 +12,7 @@ az account set --subscription $sub
 #           export foo="bar"
 #           az ... | xargs -L1 bash -c 'az ... "$foo"'
 
-export rgName="tue-RG"
+export rgName="Docker-RG"
 templateRoot="https://raw.githubusercontent.com/www42/arm/master/templates"
 
 # ---- Resource Groups ----
@@ -29,7 +30,8 @@ az deployment group create \
 
 
 # ---- Deployments ----
-az deployment group create --name tue-09 --resource-group $rgName --template-file templates/VM.json --parameters templates/VM.parameters.json
+az deployment group create --name docker-01 --resource-group $rgName --template-file templates/VirtualNetwork.json --parameters templates/VirtualNetwork.parameters.json
+az deployment group create --name docker-02 --resource-group $rgName --template-file templates/Bastion.json --parameters templates/Bastion.parameters.json
 
 az deployment group list --resource-group $rgName --query "sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp)" --output table
 
