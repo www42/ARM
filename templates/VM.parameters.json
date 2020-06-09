@@ -6,7 +6,7 @@
             "value": "SVR1"
         },
         "vmSize": {
-            "value": "Standard_F2s_v2"
+            "value": "Standard_DS2_v2"
         },
         "vmIp": {
             "value": "10.0.0.201"
