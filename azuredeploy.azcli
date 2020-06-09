@@ -12,7 +12,7 @@ az account set --subscription $sub
 #           export foo="bar"
 #           az ... | xargs -L1 bash -c 'az ... "$foo"'
 
-export rgName="Docker-RG"
+export rgName="Project-RG"
 templateRoot="https://raw.githubusercontent.com/www42/arm/master/templates"
 
 # ---- Resource Groups ----
@@ -30,8 +30,11 @@ az deployment group create \
 
 
 # ---- Deployments ----
-az deployment group create --name docker-01 --resource-group $rgName --template-file templates/VirtualNetwork.json --parameters templates/VirtualNetwork.parameters.json
-az deployment group create --name docker-02 --resource-group $rgName --template-file templates/Bastion.json --parameters templates/Bastion.parameters.json
+az deployment group create --name demo01 --resource-group $rgName --template-file templates/VirtualNetwork.jso
+n --parameters templates/VirtualNetwork.parameters.json
+az deployment group create --name demo03 --resource-group $rgName --template-file templates/Bastion.json --parameters templates/Bastion.parameters.json
+az deployment group create --name demo04 --resource-group $rgName --template-file templates/Automation.json --parameters templates/Automation.parameters.json
+az deployment group create --name demo05 --resource-group $rgName --template-file templates/VM.json --parameters templates/VM.parameters.json
 
 az deployment group list --resource-group $rgName --query "sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp)" --output table
 
