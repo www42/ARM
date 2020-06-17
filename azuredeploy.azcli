@@ -30,8 +30,7 @@ az deployment group create \
 
 
 # ---- Deployments ----
-az deployment group create --name demo01 --resource-group $rgName --template-file templates/VirtualNetwork.jso
-n --parameters templates/VirtualNetwork.parameters.json
+az deployment group create --name demo01 --resource-group $rgName --template-file templates/VirtualNetwork.json --parameters templates/VirtualNetwork.parameters.json
 az deployment group create --name demo03 --resource-group $rgName --template-file templates/Bastion.json --parameters templates/Bastion.parameters.json
 az deployment group create --name demo04 --resource-group $rgName --template-file templates/Automation.json --parameters templates/Automation.parameters.json
 az deployment group create --name demo05 --resource-group $rgName --template-file templates/VM.json --parameters templates/VM.parameters.json
