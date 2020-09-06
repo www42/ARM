@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "value": "vm1"
+        },
+        "adminUsername": {
+            "value": "student"
+        },
+        "adminPassword": {
+            "value": "Pa55w.rd1234"
+        },
+        "vmSize": {
+            "value": "Standard_D2s_v3"
+        },
+        "existingVnetName": {
+            "value": "csdemo-vnet"
+        },
+        "existingSubnetName": {
+            "value": "default"
+        }
+    }
+}
