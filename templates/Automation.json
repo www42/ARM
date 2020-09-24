@@ -16,6 +16,10 @@
             "xActiveDirectory": {
                 "name": "xActiveDirectory",
                 "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.3.0.0.nupkg"
+            },
+            "ActiveDirectoryDsc": {
+                "name": "ActiveDirectoryDsc",
+                "uri": "https://psg-prod-eastus.azureedge.net/packages/activedirectorydsc.6.0.1.nupkg"
             }
         },
         "dscConfigurations": {
@@ -90,6 +94,16 @@
                             "uri":"[variables('dscModules').xActiveDirectory.uri]"
                         }
                     }
+                },
+                {
+                    "name": "[variables('dscModules').ActiveDirectoryDsc.name]",
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]"
+                    ],
+                    "properties": {}
                 }
             ]
         }
