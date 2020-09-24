@@ -1,0 +1,169 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+           "type": "string"
+        },
+        "vmSize": {
+           "type": "string",
+           "defaultValue": "Standard_DS2_v2"
+        },
+        "vmIp": {
+           "type": "string"
+        },
+        "adminUserName": {
+           "type": "string",
+           "defaultValue": "Student"
+        },
+        "adminPassword": {
+           "type": "string",
+           "defaultValue": "Pa55w.rd1234"
+        },
+        "virtualNetworkName": {
+           "type": "string",
+            "defaultValue": "Vnet1"
+        },
+        "subnetName": {
+           "type": "string",
+           "defaultValue": "Subnet0"
+        },
+        "automationAccountName": {
+           "type": "string",
+           "defaultValue": "PS61-Automation"
+        },
+        "nodeConfigurationName": {
+           "type": "string",
+           "defaultValue": "TestConfig.IsWebServer"
+        },
+        "location": {
+           "type": "string",
+           "defaultValue": "[resourceGroup().location]"
+        }
+    },
+    "functions": [],
+    "variables": {
+        "vmNetworkInterfaceName": "[concat(parameters('vmName'), '-Nic')]",
+        "vmOsDiskName": "[concat(parameters('vmName'), '-Disk')]",
+        "vmComputerName": "[parameters('vmName')]"
+    },
+    "resources": [
+        {
+           "name": "[variables('vmNetworkInterfaceName')]",
+           "type": "Microsoft.Network/networkInterfaces",
+           "apiVersion": "2019-11-01",
+           "location": "[parameters('location')]",
+           "properties": {
+               "ipConfigurations": [
+                   {
+                       "name": "ipConfig1",
+                       "properties": {
+                           "privateIPAllocationMethod": "Static",
+                           "privateIPAddress": "[parameters('vmIp')]",
+                           "subnet": {
+                               "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
+                           }
+                       }
+                   }
+               ]
+           }
+        },
+        {
+            "name": "[parameters('vmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNetworkInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[variables('vmOsDiskName')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmComputerName')]",
+                    "adminUsername": "[parameters('adminUserName')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNetworkInterfaceName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'),'/Dsc')]",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            ],
+            "properties": {
+                "type": "DSC",
+                "publisher": "Microsoft.Powershell",
+                "typeHandlerVersion": "2.76",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "Properties": [
+                        {
+                            "Name": "RegistrationKey",
+                            "Value": {
+                                "UserName": "PLACEHOLDER_DONOTUSE",
+                                "Password": "PrivateSettingsRef:registrationKeyPrivate"
+                            },
+                            "TypeName": "System.Management.Automation.PSCredential"
+                        },
+                        {
+                            "Name": "RegistrationUrl",
+                            "Value": "[reference(resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName')), '2015-10-31').registrationUrl]",
+                            "TypeName": "System.String"
+                        },
+                        {
+                          "Name": "NodeConfigurationName",
+                          "Value": "[parameters('nodeConfigurationName')]",
+                          "TypeName": "System.String"
+                        },
+                        {
+                          "Name": "ConfigurationMode",
+                          "Value": "ApplyandAutoCorrect",
+                          "TypeName": "System.String"
+                        },
+                        {
+                          "Name": "RebootNodeIfNeeded",
+                          "Value": true,
+                          "TypeName": "System.Boolean"
+                        },
+                        {
+                          "Name": "ActionAfterReboot",
+                          "Value": "ContinueConfiguration",
+                          "TypeName": "System.String"
+                        }                        
+                    ]
+                },
+                "protectedSettings": {
+                    "Items": {
+                        "registrationKeyPrivate": "[listKeys(resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName')), '2015-10-31').keys[0].value]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

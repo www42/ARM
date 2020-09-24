@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworkName": {
+           "type": "string",
+           "defaultValue": "Vnet1"
+        },
+        "subnetName": {
+           "type": "string",
+           "defaultValue": "Subnet1"
+        },
+        "subnetAddressPrefix": {
+           "type": "string",
+            "defaultValue": "10.0.1.0/24"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "The subnet. Link to virtual network by name.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName'))]",
+            "apiVersion": "2019-12-01",
+            "properties": {
+                "addressPrefix": "[parameters('subnetAddressPrefix')]"
+            }
+        }
+
+    ],
+    "outputs": {},
+    "functions": []
+}

@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "bastionHostName": {
+           "type": "string",
+           "defaultValue": "[concat(parameters('virtualNetworkName'),'-Bastion')]"
+        },
+        "bastionSubnetAddressPrefix": {
+           "type": "string",
+           "defaultValue": "10.0.255.32/27"
+        }
+    },
+    "functions": [],
+    "variables": {
+        "bastionHostIpAddressName": "[concat(parameters('bastionHostName'),'-Ip')]"
+    },
+    "resources": [
+        {
+            "comments": "The Bastion host. Depends on it's public IP as well as it's subnet",
+            "type": "Microsoft.Network/bastionHosts",
+            "name": "[parameters('bastionHostName')]",
+            "apiVersion": "2019-12-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('bastionHostIpAddressName')]",
+                "AzureBastionSubnet"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipConfiguration",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionHostIpAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'AzureBastionSubnet')]"
+                            }
+                        } 
+                    }
+                ]
+            }
+        },
+        {
+            "comments": "Bastion host's public IP. Must be Standard SKU and static.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('bastionHostIpAddressName')]",
+            "apiVersion": "2019-12-01",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "comments": "Bastion host's subnet on the virtual network. Must name it AzureBastionSubnet.",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworkName'), '/AzureBastionSubnet')]",
+            "apiVersion": "2019-12-01",
+            "properties": {
+                "addressPrefix": "[parameters('bastionSubnetAddressPrefix')]"
+            }
+        }
+    ],
+    "outputs": {}
+}

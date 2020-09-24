@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworkName": {
+            "value": "VNet1"
+        },
+        "bastionSubnetAddressPrefix": {
+            "value": "10.0.255.32/27"
+        }
+    }
+}

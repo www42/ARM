@@ -1,0 +1,86 @@
+# Login
+az login
+az account show
+
+# Create prerequisite VNet
+# ------------------------
+location="westus"
+rg="cloudshell-rg"
+az group create --name $rg --location $location
+
+cd ~/git/cloudshell/101-cloud-shell-vnet/prereqs
+az deployment group create \
+    --name vnet \
+    --template-file prereq.azuredeploy.json \
+    --parameters prereq.azuredeploy.parameters.json \
+    --parameters vnetName=csdemo-vnet \
+    --resource-group $rg
+
+az network vnet list --query "[].{name:name,location:location}" --output table
+
+# Deploy Windows VM into VNet
+# ---------------------------
+cd ~/git/cloudshell
+az deployment group create \
+    --name vm02 \
+    --template-file windowsVm.json \
+    --parameters windowsVm.parameters.json \
+    --parameters vmName=vm4 \
+    --resource-group $rg
+
+
+# Deploy relay, subnets, network profile, and role assignments (8 resources)
+# --------------------------------------------------------------------------
+# ObjectId of "Azure Container Instance Service" is needed
+az ad sp list --all --query "[?appDisplayName == 'Azure Container Instance Service'].{appDisplayName:appDisplayName,objectId:objectId}" -o jsonc
+
+cd ~/git/cloudshell/101-cloud-shell-vnet
+az deployment group create \
+    --name csdemo02 \
+    --template-file azuredeploy.json \
+    --parameters azuredeploy.parameters.json \
+    --parameters existingVNETName=csdemo-vnet \
+    --parameters relayNamespaceName=csrelay69118 \
+    --parameters azureContainerInstanceOID="4ce88fc8-fb7a-498f-89b5-1af800caf10b" \
+    --resource-group $rg
+
+
+# Deploy storage account
+# ----------------------
+cd ~/git/cloudshell/101-cloud-shell-vnet-storage
+az deployment group create \
+    --name storage01 \
+    --template-file azuredeploy.json \
+    --parameters azuredeploy.parameters.json \
+    --parameters existingVNETName=csdemo-vnet \
+    --parameters storageAccountName=csstorage69118 \
+    --resource-group $rg
+
+az storage account list --query "[].{name:name,kind:kind,resourceGroup:resourceGroup,location:location}" -o table
+
+# Register provider
+# -----------------
+az provider show --namespace Microsoft.ContainerInstance --query "{namespace:namespace,registrationState:registrationState}" -o jsonc
+
+
+# =====================================
+# In Azure portal initialize CloudShell
+# =====================================
+
+
+# How does it work?
+# -----------------
+# relay = service bus?  No.
+az servicebus namespace list
+# Nothing.
+
+az relay namespace list --query "[].{name:name,location:location,serviceBusEndpoint:serviceBusEndpoint}"
+# https://copenhagenrelay.servicebus.windows.net
+
+az relay namespace authorization-rule list --namespace-name csrelay69118 --resource-group $rg -o jsonc
+az relay namespace authorization-rule keys list --name RootManageSharedAccessKey --namespace-name csrelay69118 --resource-group $rg
+
+
+
+# What is network profile? NIC of an ACI container?
+az network profile list --resource-group $rg --query "[].name"
