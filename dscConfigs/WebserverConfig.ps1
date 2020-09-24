@@ -1,4 +1,4 @@
-configuration TestConfig
+configuration WebserverConfig
 {
     Node IsWebServer
     {
