@@ -49,6 +49,34 @@
             },
             "resources": [
                 {
+                    "name": "[variables('dscModules').xActiveDirectory.name]",
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri":"[variables('dscModules').xActiveDirectory.uri]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscModules').ActiveDirectoryDsc.name]",
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('dscModules').ActiveDirectoryDsc.uri]"
+                        }
+                    }
+                },
+                {
                     "name": "[variables('dscConfigurations').WebServerConfig.name]",
                     "type": "configurations",
                     "apiVersion": "2015-10-31",
@@ -120,34 +148,6 @@
                             "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
                         },
                         "parameters": {}
-                    }
-                },
-                {
-                    "name": "[variables('dscModules').xActiveDirectory.name]",
-                    "type": "modules",
-                    "apiVersion": "2015-10-31",
-                    "location": "[parameters('location')]",
-                    "dependsOn": [
-                        "[parameters('automationAccountName')]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri":"[variables('dscModules').xActiveDirectory.uri]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('dscModules').ActiveDirectoryDsc.name]",
-                    "type": "modules",
-                    "apiVersion": "2015-10-31",
-                    "location": "[parameters('location')]",
-                    "dependsOn": [
-                        "[parameters('automationAccountName')]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('dscModules').ActiveDirectoryDsc.uri]"
-                        }
                     }
                 }
             ]

@@ -1,21 +1,11 @@
 Configuration ADDomain_NewForest_Config
 {
-    param
-    (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [System.Management.Automation.PSCredential]
-        $Credential,
-
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [System.Management.Automation.PSCredential]
-        $SafeModePassword
-    )
-
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
 
+    $Credential = ConvertTo-SecureString -String 'Pa55w.rd1234' -AsPlainText -Force
+    $SafeModePassword = ConvertTo-SecureString -String 'Pa55w.rd1234' -AsPlainText -Force
+    
     node 'localhost'
     {
         WindowsFeature 'ADDS'
