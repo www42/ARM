@@ -34,7 +34,7 @@
         },
         "nodeConfigurationName": {
            "type": "string",
-           "defaultValue": "TestConfig.IsWebServer"
+           "defaultValue": "WebserverConfig.IsWebServer"
         },
         "location": {
            "type": "string",

@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmName": {
-            "value": "SVR1"
+            "value": "DC1"
         },
         "vmSize": {
             "value": "Standard_DS2_v2"
@@ -27,7 +27,7 @@
             "value": "PS61-Automation"
         },
         "nodeConfigurationName": {
-            "value": "TestConfig.IsWebServer"
+            "value": "ADDomain_NewForest_Config.localhost"
         }
     }
 }
