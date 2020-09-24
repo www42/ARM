@@ -29,7 +29,7 @@
                 "uri": "https://raw.githubusercontent.com/www42/arm/master/dscConfigs/WebserverConfig.ps1"
             },
             "DomainControllerConfig": {
-                "name": "DomainControllerConfig",
+                "name": "ADDomain_NewForest_Config",
                 "description": "Domain Controller DSC configuration contoso.com",
                 "uri": "https://raw.githubusercontent.com/www42/arm/master/dscConfigs/DomainControllerConfig.ps1"
             }

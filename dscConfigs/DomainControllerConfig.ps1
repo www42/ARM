@@ -3,9 +3,11 @@ Configuration ADDomain_NewForest_Config
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
 
-    $Credential = ConvertTo-SecureString -String 'Pa55w.rd1234' -AsPlainText -Force
-    $SafeModePassword = ConvertTo-SecureString -String 'Pa55w.rd1234' -AsPlainText -Force
-    
+    $AdminName = 'Administrator'
+    $SecurePW = ConvertTo-SecureString -String 'Pa55w.rd1234' -AsPlainText -Force
+    $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $AdminName,$SecurePW
+    $SafeModePassword = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $AdminName,$SecurePW
+
     node 'localhost'
     {
         WindowsFeature 'ADDS'
