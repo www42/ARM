@@ -16,12 +16,12 @@
 
 | Template                                                   | Purpose      
 |------------------------------------------------------------|--------------
-| [empty.json](templates/empty.json)                         | Delete all resources in a resource group (complete mode deployment). 
-| [vnet.json](templates/vnet.json)                           | Create Virtual Network 
-| [subnet.json](templates/subnet.json)                       | Add Subnet to existing Virtual Network. 
-| [vnet_bastion.json](templates/vnet_bastion.json)           | Create Virtual Network with Bastian Host. 
-| [vnet_bastion_vm.json](templates/vnet_bastion_vm.json)     | Create Virtual Network with Bastion Host and single VM. 
-| [automationAccount.json](templates/automationAccount.json) | Create Automation Account with a (compiled) DSC configuration
+| [Empty.json](templates/Empty.json)                         | Delete all resources in a resource group (complete mode deployment). 
+| [VirtualNetwork.json](templates/VirtualNetwork.json)       | Create Virtual Network with one subnet included
+| [Subnet.json](templates/Subnet.json)                       | Add Subnet to existing Virtual Network. 
+| [Bastion.json](templates/Bastion.json)                     | Add Bastian Host service to a Virtual Network. 
+| [Automation.json](templates/Automation.json)               | Create Automation Account with a (compiled) DSC configuration
+| [Vm.json](templates/Vm.json)                               | Create VM, no public IP
 | [ps-61.json](templates/ps-61.json)                         | PS-61 Scenario: Virtual Network with Bastion Host and three VMs. 
 
 [![](img/empty.png)](#)
