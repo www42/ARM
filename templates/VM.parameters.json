@@ -27,7 +27,7 @@
             "value": "PS61-Automation"
         },
         "nodeConfigurationName": {
-            "value": "ADDomain_NewForest_Config.localhost"
+            "value": "ADDomain_NewForest.localhost"
         }
     }
 }

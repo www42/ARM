@@ -20,7 +20,7 @@
 | [VirtualNetwork.json](templates/VirtualNetwork.json)       | Create Virtual Network with one subnet included
 | [Subnet.json](templates/Subnet.json)                       | Add Subnet to existing Virtual Network. 
 | [Bastion.json](templates/Bastion.json)                     | Add Bastian Host service to a Virtual Network. 
-| [Automation.json](templates/Automation.json)               | Create Automation Account with a (compiled) DSC configuration
+| [Automation.json](templates/Automation.json)               | Create Automation Account, upload DSC configurations, and compile them to MOF
 | [Vm.json](templates/Vm.json)                               | Create VM, no public IP
 | [ps-61.json](templates/ps-61.json)                         | PS-61 Scenario: Virtual Network with Bastion Host and three VMs. 
 

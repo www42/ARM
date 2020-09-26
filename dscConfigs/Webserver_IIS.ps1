@@ -1,4 +1,4 @@
-configuration WebserverConfig
+configuration Webserver_IIS
 {
     Node IsWebServer
     {

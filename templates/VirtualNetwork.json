@@ -7,7 +7,8 @@
             "defaultValue": "[resourceGroup().location]"
         },
         "virtualNetworkName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "VNet1"
         },
         "virtualNetworkAddressSpace": {
             "type": "string",

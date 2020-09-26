@@ -63,7 +63,7 @@
             }
         },
         {
-            "comments": "Bastion host's subnet on the virtual network. Must name it AzureBastionSubnet.",
+            "comments": "Bastion host's subnet on the virtual network. Subnet's name has to be 'AzureBastionSubnet'.",
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "name": "[concat(parameters('virtualNetworkName'), '/AzureBastionSubnet')]",
             "apiVersion": "2019-12-01",

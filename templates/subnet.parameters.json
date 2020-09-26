@@ -6,10 +6,10 @@
             "value": "Vnet1"
         },
         "subnetName": {
-            "value": "Subnet2"
+            "value": "GatewaySubnet"
         },
         "subnetAddressPrefix": {
-            "value": "10.0.2.0/24"
+            "value": "10.0.255.0/27"
         }
     }
 }

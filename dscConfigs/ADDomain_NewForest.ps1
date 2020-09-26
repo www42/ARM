@@ -1,4 +1,4 @@
-Configuration ADDomain_NewForest_Config
+Configuration ADDomain_NewForest
 {
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
