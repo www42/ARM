@@ -1,43 +1,19 @@
 Connect-AzAccount
 Get-AzContext | fl
 
-$location = "westeurope"
+$location = "westus"
 $rgName = "PS61-RG"
+$automationAccountName = 'PS61-Automation'
 
-Get-AzResourceGroup | ft ResourceGroupName, Location, ResourceId
-New-AzResourceGroup -Name $rgName -Location $location
+Get-AzResourceGroup -Name $rgName
+Get-AzResource -ResourceGroupName $rgName | Sort-Object ResourceType | Format-Table Name,ResourceType
 
+# ----- Deployments -----
+Get-AzResourceGroupDeployment -ResourceGroupName $rgName | Sort-Object Timestamp -Descending | Format-Table DeploymentName,ProvisioningState,Timestamp
 
- 
-#--- Deploy with Template URI ----------------------------------------------------------------
-$template = "https://raw.githubusercontent.com/www42/arm/master/templates/automationAccount.json"
-$automationAccountName = "foo9-Automation"
-$deploymentName = "sun09"
-New-AzResourceGroupDeployment `
--ResourceGroupName $rgName `
--Name $deploymentName `
--TemplateUri $template `
--TemplateParameterObject @{automationAccountName="$automationAccountName"}
-
-#--- Deploy with Template File ---------------------------------------------------------------
-$file = "./templates/automationAccount.json"
-$automationAccountName = "foo8-Automation"
-$deploymentName = "sun08"
-New-AzResourceGroupDeployment `
-    -ResourceGroupName $rgName `
-    -Name $deploymentName `
-    -TemplateFile $file `
-    -TemplateParameterObject @{automationAccountName="$automationAccountName"}
-
-Get-AzResourceGroupDeployment -ResourceGroupName $rgName | Sort-Object Timestamp | ft DeploymentName, ProvisioningState, Timestamp
-
-Get-AzAutomationAccount | ft AutomationAccountName, ResourceGroupName, Location
-Get-AzAutomationDscConfiguration -ResourceGroupName $rgName -AutomationAccountName $automationAccountName | ft AutomationAccountName, Name, State
-Get-AzAutomationDscCompilationJob -ResourceGroupName $rgName -AutomationAccountName $automationAccountName
-Get-AzAutomationModule -ResourceGroupName $rgName -AutomationAccountName $automationAccountName | ft Name, Version, IsGlobal, AutomationAccountName
-
-
-
-Get-AzAutomationRegistrationInfo -ResourceGroupName $rgName -AutomationAccountName $automationAccountName
-(Get-AzAutomationRegistrationInfo -ResourceGroupName $rgName -AutomationAccountName $automationAccountName).Endpoint
-(Get-AzAutomationRegistrationInfo -ResourceGroupName $rgName -AutomationAccountName $automationAccountName).PrimaryKey
+# ----- Azure Automation Account -----
+Get-AzAutomationAccount -Name $automationAccountName -ResourceGroupName $rgName
+Get-AzAutomationModule -AutomationAccountName $automationAccountName -ResourceGroupName $rgName | Format-Table Name,Version,IsGlobal,AutomationAccountName
+Get-AzAutomationDscConfiguration -AutomationAccountName $automationAccountName -ResourceGroupName $rgName | Format-Table AutomationAccountName,Name,State
+Get-AzAutomationDscCompilationJob -AutomationAccountName $automationAccountName -ResourceGroupName $rgName | Format-Table ConfigurationName,JobParameters,Status
+Get-AzAutomationRegistrationInfo -AutomationAccountName $automationAccountName -ResourceGroupName $rgName

@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmName": {
-            "value": "DC1"
+            "value": "DC2"
         },
         "vmSize": {
             "value": "Standard_DS2_v2"
         },
         "vmIp": {
-            "value": "10.0.0.201"
+            "value": "10.0.0.202"
         },
         "adminUserName": {
             "value": "Student"

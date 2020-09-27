@@ -18,7 +18,7 @@ Configuration ADDomain_NewForest
 
         WindowsFeature 'RSAT'
         {
-            Name   = 'RSAT-AD-PowerShell'
+            Name   = 'RSAT-AD-Tools'
             Ensure = 'Present'
         }
 

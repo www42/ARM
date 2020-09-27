@@ -3,14 +3,16 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmName": {
-           "type": "string"
+           "type": "string",
+           "defaultValue": "DC1"
+        },
+        "vmIp": {
+           "type": "string",
+           "defaultValue": "10.0.0.201"
         },
         "vmSize": {
            "type": "string",
            "defaultValue": "Standard_DS2_v2"
-        },
-        "vmIp": {
-           "type": "string"
         },
         "adminUserName": {
            "type": "string",
@@ -34,7 +36,7 @@
         },
         "nodeConfigurationName": {
            "type": "string",
-           "defaultValue": "Webserver_IIS.IsWebServer"
+           "defaultValue": "ADDomain_NewForest.localhost"
         },
         "location": {
            "type": "string",
