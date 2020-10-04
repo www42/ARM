@@ -51,8 +51,8 @@
     },
     "resources": [
         {
-           "name": "[variables('vmNetworkInterfaceName')]",
            "type": "Microsoft.Network/networkInterfaces",
+           "name": "[variables('vmNetworkInterfaceName')]",
            "apiVersion": "2019-11-01",
            "location": "[parameters('location')]",
            "properties": {
@@ -71,8 +71,8 @@
            }
         },
         {
-            "name": "[parameters('vmName')]",
             "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vmName')]",
             "apiVersion": "2019-07-01",
             "location": "[parameters('location')]",
             "dependsOn": [
@@ -123,6 +123,8 @@
                 "typeHandlerVersion": "2.76",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
+                    "modulesUrl": "",
+                    "configurationFunction": "",
                     "Properties": [
                         {
                             "Name": "RegistrationKey",

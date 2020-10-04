@@ -1,5 +1,13 @@
 Configuration ADDomain_NewForest
 {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $DomainName
+    )
+
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
 
@@ -24,7 +32,7 @@ Configuration ADDomain_NewForest
 
         ADDomain 'contoso.com'
         {
-            DomainName                    = 'contoso.com'
+            DomainName                    = $DomainName
             Credential                    = $Credential
             SafemodeAdministratorPassword = $SafeModePassword
             ForestMode                    = 'WinThreshold'
