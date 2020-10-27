@@ -1,41 +1,30 @@
-# ---- Login to Azure ----
-az account show
-az account list --all --query '[].{name:name,state:state,isDefault:isDefault}' -o table
-az account list --all -o table
-az login 
-az logout
-
-sub="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
-az account set --subscription $sub
-
 # ---- Variables ----
-#      for use in sub shells a variable has to be exported:
-#           export foo="bar"
-#           az ... | xargs -L1 bash -c 'az ... "$foo"'
-
-export rgName="PS61-RG"
-export location="westus"    # because CloudShell - VNet integration available in westus only
+# 
+export rgName="Test-RG"
+export location="westus"
 templateRoot="https://raw.githubusercontent.com/www42/arm/master/templates"
 
-# ---- Resource Groups ----
-az group list -o table
+# ---- Resource Group ----
+#
 az group create --name $rgName --location $location
-az resource list --resource-group $rgName --query "[].{Name:name, Type:type}" -o table
+az group list -o table
+az resource list --resource-group $rgName --query "sort_by([].{name:name,Type:type,location:location},&Type)" -o table
 az group delete --name $rgName --yes --no-wait
 # Remove all content of resource group (template empty.json) - complete mode!
 az deployment group create \
     --mode Complete \
     --resource-group $rgName \
-    --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/empty.json" \
+    --template-uri "$templateRoot/empty.json" \
     --name tabulaRasa01 \
     --no-wait
 
 
 # ---- Deployments ----
-az deployment group create --name vnet01     --resource-group $rgName --template-file templates/VirtualNetwork.json --parameters templates/VirtualNetwork.parameters.json
+#
+az deployment group create --name vnet02     --resource-group $rgName --template-file templates/VirtualNetwork.json --parameters templates/VirtualNetwork.parameters.json
 az deployment group create --name subnet02   --resource-group $rgName --template-file templates/Subnet.json         --parameters templates/Subnet.parameters.json
-az deployment group create --name bastion01  --resource-group $rgName --template-file templates/Bastion.json        --parameters templates/Bastion.parameters.json
-az deployment group create --name aaccount01 --resource-group $rgName --template-file templates/Automation.json     --parameters templates/Automation.parameters.json
+az deployment group create --name bastion02  --resource-group $rgName --template-file templates/Bastion.json        --parameters templates/Bastion.parameters.json
+az deployment group create --name auto01     --resource-group $rgName --template-file templates/Automation.json     --parameters templates/Automation.parameters.json
 az deployment group create --name vm01       --resource-group $rgName --template-file templates/VM.json             --parameters templates/VM.parameters.json
 
 az deployment group list --resource-group $rgName --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp))" --output table
@@ -45,9 +34,8 @@ az network vnet subnet list --resource-group $rgName --vnet-name VNet1 --query "
 az network bastion list --query "[].{Name:name, Location:location, resourceGroup:resourceGroup}" -o table
 az network public-ip list -o table
 # There is no way to manage Automation Account with Azure CLI - goto PowerShell: Get-AzAutomationAccount
+az vm extension list --resource-group $rgName --vm-name DC1 -o table
 az vm list --resource-group $rgName --show-details -o table
 # stop all vm in rg
 az vm list --resource-group $rgName --query "[].name" -o tsv | \
     xargs -L1 bash -c 'az vm deallocate --name $0 --resource-group "$rgName"'
-
-az vm extension list --resource-group $rgName --vm-name DC -o table
