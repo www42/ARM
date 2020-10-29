@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "virtualNetworkName": {
-            "value": "VNet2"
+            "value": "VNet1"
         },
         "bastionSubnetAddressPrefix": {
-            "value": "10.1.255.32/27"
+            "value": "10.0.255.32/27"
         }
     }
 }
