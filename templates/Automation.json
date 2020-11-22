@@ -27,7 +27,7 @@
             "DomainControllerConfig": {
                 "name": "ADDomain_NewForest",
                 "description": "Domain Controller DSC configuration contoso.com",
-                "uri": "https://raw.githubusercontent.com/www42/arm/master/dscConfigs/ADDomain_NewForest.ps1"
+                "uri": "https://raw.githubusercontent.com/www42/arm/param/dscConfigs/ADDomain_NewForest.ps1"
             }
         }
     },
