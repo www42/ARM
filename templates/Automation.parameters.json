@@ -3,7 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "automationAccountName": {
-            "value": "Hybrid-Automation"
+            "value": "Foo-Automation"
+        },
+        "domainName": {
+            "value": "foo.local"
         }
     }
 }

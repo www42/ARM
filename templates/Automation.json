@@ -8,6 +8,12 @@
         "location": {
            "type": "string",
            "defaultValue": "[resourceGroup().location]"
+        },
+        "domainName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Windows Server AD Domain."
+            }
         }
     },
     "functions": [],
@@ -26,8 +32,9 @@
             },
             "DomainControllerConfig": {
                 "name": "ADDomain_NewForest",
-                "description": "Domain Controller DSC configuration contoso.com",
-                "uri": "https://raw.githubusercontent.com/www42/arm/param/dscConfigs/ADDomain_NewForest.ps1"
+                "description": "Domain Controller DSC configuration.",
+                "uri": "https://raw.githubusercontent.com/www42/arm/param/dscConfigs/ADDomain_NewForest.ps1",
+                "domainName": "[parameters('domainName')]"
             }
         }
     },
@@ -131,8 +138,7 @@
                             "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
                         },
                         "parameters": {
-                            "name": "DomainName",
-                            "value": "hybrid.local"
+                            "DomainName": "[variables('dscConfigurations').DomainControllerConfig.domainName]"
                         }
                     }
                 }
