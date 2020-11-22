@@ -130,7 +130,10 @@
                         "configuration": {
                             "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
                         },
-                        "parameters": {}
+                        "parameters": {
+                            "name": "DomainName",
+                            "value": "hybrid.local"
+                        }
                     }
                 }
             ]
