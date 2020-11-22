@@ -28,6 +28,7 @@ Configuration ADDomain_NewForest
         {
             Name   = 'RSAT-AD-Tools'
             Ensure = 'Present'
+            IncludeAllSubFeature = $true
         }
 
         ADDomain 'contoso.com'

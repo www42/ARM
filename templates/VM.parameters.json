@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmName": {
-            "value": "DC2"
+            "value": "DC1"
         },
         "vmSize": {
             "value": "Standard_DS2_v2"
         },
         "vmIp": {
-            "value": "10.0.0.202"
+            "value": "10.0.0.201"
         },
         "adminUserName": {
             "value": "Student"
@@ -18,13 +18,13 @@
             "value": "Pa55w.rd1234"
         },
         "virtualNetworkName": {
-            "value": "Vnet1"
+            "value": "Hybrid-Vnet"
         },
         "subnetName": {
             "value": "Subnet0"
         },
         "automationAccountName": {
-            "value": "PS61-Automation"
+            "value": "Hybrid-Automation"
         },
         "nodeConfigurationName": {
             "value": "ADDomain_NewForest.localhost"
