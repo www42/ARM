@@ -35,8 +35,8 @@ az deployment group create \
 az deployment group create --name vnet01     --resource-group $rgName --template-file templates/VirtualNetwork.json --parameters templates/VirtualNetwork.parameters.json
 az deployment group create --name subnet02   --resource-group $rgName --template-file templates/Subnet.json         --parameters templates/Subnet.parameters.json
 az deployment group create --name bastion01  --resource-group $rgName --template-file templates/Bastion.json        --parameters templates/Bastion.parameters.json
-az deployment group create --name aaccount04 --resource-group $rgName --template-file templates/Automation.json     --parameters templates/Automation.parameters.json
-az deployment group create --name vm03       --resource-group $rgName --template-file templates/VM.json             --parameters templates/VM.parameters.json
+az deployment group create --name aaccount01 --resource-group $rgName --template-file templates/Automation.json     --parameters templates/Automation.parameters.json
+az deployment group create --name vm01       --resource-group $rgName --template-file templates/VM.json             --parameters templates/VM.parameters.json
 
 az deployment group list --resource-group $rgName --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp))" --output table
 az deployment group cancel --name aaccount02 --resource-group $rgName 
