@@ -18,13 +18,13 @@
             "value": "Pa55w.rd1234"
         },
         "virtualNetworkName": {
-            "value": "Vnet1"
+            "value": "Hybrid-Vnet"
         },
         "subnetName": {
             "value": "Subnet0"
         },
         "automationAccountName": {
-            "value": "Test-Automation"
+            "value": "Foo-Automation"
         },
         "nodeConfigurationName": {
             "value": "ADDomain_NewForest.localhost"

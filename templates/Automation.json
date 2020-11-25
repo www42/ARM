@@ -8,15 +8,17 @@
         "location": {
            "type": "string",
            "defaultValue": "[resourceGroup().location]"
+        },
+        "domainName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Windows Server AD Domain."
+            }
         }
     },
     "functions": [],
     "variables": {
         "dscModules": {
-            "xActiveDirectory": {
-                "name": "xActiveDirectory",
-                "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/xactivedirectory.3.0.0.nupkg"
-            },
             "ActiveDirectoryDsc": {
                 "name": "ActiveDirectoryDsc",
                 "uri": "https://psg-prod-eastus.azureedge.net/packages/activedirectorydsc.6.0.1.nupkg"
@@ -30,8 +32,9 @@
             },
             "DomainControllerConfig": {
                 "name": "ADDomain_NewForest",
-                "description": "Domain Controller DSC configuration contoso.com",
-                "uri": "https://raw.githubusercontent.com/www42/arm/master/dscConfigs/ADDomain_NewForest.ps1"
+                "description": "Domain Controller DSC configuration.",
+                "uri": "https://raw.githubusercontent.com/www42/arm/param/dscConfigs/ADDomain_NewForest.ps1",
+                "domainName": "[parameters('domainName')]"
             }
         }
     },
@@ -48,20 +51,6 @@
                 }
             },
             "resources": [
-                {
-                    "name": "[variables('dscModules').xActiveDirectory.name]",
-                    "type": "modules",
-                    "apiVersion": "2015-10-31",
-                    "location": "[parameters('location')]",
-                    "dependsOn": [
-                        "[parameters('automationAccountName')]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri":"[variables('dscModules').xActiveDirectory.uri]"
-                        }
-                    }
-                },
                 {
                     "name": "[variables('dscModules').ActiveDirectoryDsc.name]",
                     "type": "modules",
@@ -148,7 +137,9 @@
                         "configuration": {
                             "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
                         },
-                        "parameters": {}
+                        "parameters": {
+                            "DomainName": "[variables('dscConfigurations').DomainControllerConfig.domainName]"
+                        }
                     }
                 }
             ]

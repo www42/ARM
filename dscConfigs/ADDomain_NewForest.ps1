@@ -1,10 +1,18 @@
 Configuration ADDomain_NewForest
 {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $DomainName
+    )
+
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
 
-    $AdminName = 'Administrator'
-    $SecurePW = ConvertTo-SecureString -String 'Pa55w.rd1234' -AsPlainText -Force
+    $AdminName = 'Wolfgang'
+    $SecurePW = ConvertTo-SecureString -String 'F00.bar12345' -AsPlainText -Force
     $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $AdminName,$SecurePW
     $SafeModePassword = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $AdminName,$SecurePW
 
@@ -20,11 +28,12 @@ Configuration ADDomain_NewForest
         {
             Name   = 'RSAT-AD-Tools'
             Ensure = 'Present'
+            IncludeAllSubFeature = $true
         }
 
-        ADDomain 'contoso.com'
+        ADDomain 'ADDomain'
         {
-            DomainName                    = 'contoso.com'
+            DomainName                    = $DomainName
             Credential                    = $Credential
             SafemodeAdministratorPassword = $SafeModePassword
             ForestMode                    = 'WinThreshold'
