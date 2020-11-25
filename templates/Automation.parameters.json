@@ -3,10 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "automationAccountName": {
-            "value": "Foo-Automation"
+            "value": "Hybrid-Automation"
         },
         "domainName": {
-            "value": "foo.local"
+            "value": "onprem.local"
         }
     }
 }

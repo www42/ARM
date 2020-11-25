@@ -32,7 +32,7 @@
         },
         "automationAccountName": {
            "type": "string",
-           "defaultValue": "PS61-Automation"
+           "defaultValue": "Hybrid-Automation"
         },
         "nodeConfigurationName": {
            "type": "string",

@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "virtualNetworkName": {
-            "value": "Vnet1"
+            "value": "Hybrid-VNet"
         },
         "subnetName": {
             "value": "GatewaySubnet"
