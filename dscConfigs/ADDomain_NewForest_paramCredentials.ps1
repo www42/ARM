@@ -10,7 +10,7 @@ Configuration ADDomain_NewForest
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string]
-        $DomainAdminName
+        $DomainAdminName,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
