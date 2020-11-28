@@ -2,7 +2,7 @@
 #
 rgName="Hybrid-RG"
 location="westeurope"
-az group create --name $rgName --location $location
+az group create --name $rgName --location $location --tags "Scenario=Hybrid"
 
 az group list -o table
 az resource list --resource-group $rgName --query "sort_by([].{name:name,Type:type,location:location},&Type)" -o table
@@ -10,22 +10,17 @@ az resource list --resource-group $rgName --query "sort_by([].{name:name,Type:ty
 
 # ---- Deploy Templates ----
 #
-az deployment group create --name vnet01     --resource-group $rgName --template-file Scenario_Hybrid.json #--parameters Scenario_Hybrid.parameters.json
+az deployment group create --name hybrid01 --resource-group $rgName --template-file Scenario_Hybrid.json #--parameters Scenario_Hybrid.parameters.json
 
 az deployment group list --resource-group $rgName --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp))" --output table
-az deployment group cancel --name aaccount02 --resource-group $rgName 
+az deployment group cancel --name hybrid01 --resource-group $rgName 
 
 
 # ---- Remove all resources from Resource Group by empty template - complete mode! ----
 #
 templateRoot="https://raw.githubusercontent.com/www42/arm/master/templates"
 
-az deployment group create \
-    --mode Complete \
-    --resource-group $rgName \
-    --template-uri "$templateRoot/empty.json" \
-    --name tabulaRasa01 \
-    --no-wait
+az deployment group create --name tabulaRasa01 --resource-group $rgName --mode Complete --template-uri "$templateRoot/empty.json" --no-wait
 
 
 # ---- Remove Resource Group including all resources ----
