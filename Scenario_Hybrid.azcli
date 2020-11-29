@@ -10,7 +10,7 @@ az resource list --resource-group $rgName --query "sort_by([].{name:name,Type:ty
 
 # ---- Deploy Templates ----
 #
-az deployment group create --name hybrid01 --resource-group $rgName --template-file Scenario_Hybrid.json #--parameters Scenario_Hybrid.parameters.json
+az deployment group create --name hybrid01 --resource-group $rgName --template-file Scenario_Hybrid.json
 
 az deployment group list --resource-group $rgName --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp))" --output table
 az deployment group cancel --name hybrid01 --resource-group $rgName 

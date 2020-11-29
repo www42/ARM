@@ -2,6 +2,54 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "location": {
+           "type": "string",
+           "defaultValue": "[resourceGroup().location]"
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "defaultValue": "Monitoring-VNet"
+        },
+        "virtualNetworkAddressSpace": {
+            "type": "string",
+            "defaultValue": "172.18.0.0/16"
+        },
+        "subnet0Name": {
+            "type": "string",
+            "defaultValue": "Subnet0"
+        },
+        "subnet0AddressPrefix": {
+            "type": "string",
+            "defaultValue": "172.18.0.0/24"
+        },
+        "subnet1Name": {
+            "type": "string",
+            "defaultValue": "AzureBastionSubnet"
+        },
+        "subnet1AddressPrefix": {
+            "type": "string",
+            "defaultValue": "172.18.255.32/27"
+        },
+        "bastionHostName": {
+           "type": "string",
+           "defaultValue": "[concat(parameters('virtualNetworkName'),'-Bastion')]"
+        },
+        "vmName": {
+           "type": "string",
+           "defaultValue": "VM1"
+        },
+        "vmSize": {
+           "type": "string",
+           "defaultValue": "Standard_DS2_v2"
+        },
+        "adminUserName": {
+           "type": "string",
+           "defaultValue": "Student"
+        },
+        "adminPassword": {
+           "type": "string",
+           "defaultValue": "Pa55w.rd1234"
+        },
         "workspaceName": {
             "type": "string",
             "defaultValue": "Workspace69118",
@@ -30,46 +78,11 @@
             "metadata": {
             "description": "true to use resource or workspace permissions. false to require workspace permissions."
             }
-        },
-        "vmName": {
-           "type": "string",
-           "defaultValue": "VM1"
-        },
-        "vmSize": {
-           "type": "string",
-           "defaultValue": "Standard_DS2_v2"
-        },
-        "adminUserName": {
-           "type": "string",
-           "defaultValue": "Student"
-        },
-        "adminPassword": {
-           "type": "string",
-           "defaultValue": "Pa55w.rd1234"
-        },
-        "virtualNetworkName": {
-            "type": "string",
-            "defaultValue": "Monitoring-VNet"
-        },
-        "virtualNetworkAddressSpace": {
-            "type": "string",
-            "defaultValue": "172.18.0.0/16"
-        },
-        "subnet0Name": {
-            "type": "string",
-            "defaultValue": "Subnet0"
-        },
-        "subnet0AddressPrefix": {
-            "type": "string",
-            "defaultValue": "172.18.0.0/24"
-        },
-        "location": {
-           "type": "string",
-           "defaultValue": "[resourceGroup().location]"
         }
     },
     "functions": [],
     "variables": {
+        "bastionHostIpAddressName": "[concat(parameters('bastionHostName'),'-Ip')]",
         "vmNetworkInterfaceName": "[concat(parameters('vmName'), '-Nic')]",
         "vmOsDiskName": "[concat(parameters('vmName'), '-Disk')]",
         "daExtensionName": "DependencyAgentWindows",
@@ -80,23 +93,6 @@
         "mmaExtensionVersion": "1.0"
     },
     "resources": [
-        {
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "comments": "Log Analytics Workspace",
-            "name": "[parameters('workspaceName')]",
-            "apiVersion": "2020-08-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "sku": {
-                    "name": "[parameters('workspaceSku')]"
-                },
-                "features": {
-                    "searchVersion": 1,
-                    "legacy": 0,
-                    "enableLogAccessUsingOnlyResourcePermissions": "[parameters('workspaceResourcePermissions')]"
-                }
-            }
-        },        
         {
             "comments": "The virtual network.",
             "type": "Microsoft.Network/virtualNetworks",
@@ -115,6 +111,51 @@
                         "properties": {
                             "addressPrefix": "[parameters('subnet0AddressPrefix')]"
                         }
+                    },
+                    {
+                        "name": "[parameters('subnet1Name')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnet1AddressPrefix')]"
+                        }
+                    }                    
+                ]
+            }
+        },
+        {
+            "comments": "Bastion host's public IP. Must be Standard SKU and static.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('bastionHostIpAddressName')]",
+            "apiVersion": "2019-12-01",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "comments": "The Bastion host. Depends on it's public IP as well as it's subnet",
+            "type": "Microsoft.Network/bastionHosts",
+            "name": "[parameters('bastionHostName')]",
+            "apiVersion": "2019-12-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('bastionHostIpAddressName')]",
+                "[parameters('virtualNetworkName')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipConfiguration",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionHostIpAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'AzureBastionSubnet')]"
+                            }
+                        } 
                     }
                 ]
             }
@@ -218,6 +259,23 @@
                 },
                 "protectedSettings": {
                     "workspaceKey": "[listKeys(parameters('workspaceName'), '2015-03-20').primarySharedKey]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "comments": "Log Analytics Workspace",
+            "name": "[parameters('workspaceName')]",
+            "apiVersion": "2020-08-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('workspaceSku')]"
+                },
+                "features": {
+                    "searchVersion": 1,
+                    "legacy": 0,
+                    "enableLogAccessUsingOnlyResourcePermissions": "[parameters('workspaceResourcePermissions')]"
                 }
             }
         }

@@ -34,17 +34,6 @@
            "type": "string",
            "defaultValue": "[concat(parameters('virtualNetworkName'),'-Bastion')]"
         },
-        "automationAccountName": {
-           "type": "string",
-           "defaultValue": "Hybrid-Automation"
-        },
-        "domainName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Windows Server AD Domain."
-            },
-            "defaultValue": "contoso.com"
-        },
         "vmName": {
            "type": "string",
            "defaultValue": "DC1"
@@ -68,11 +57,24 @@
         "nodeConfigurationName": {
            "type": "string",
            "defaultValue": "ADDomain_NewForest.localhost"
+        },        
+        "automationAccountName": {
+           "type": "string",
+           "defaultValue": "Hybrid-Automation"
+        },
+        "domainName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Windows Server AD Domain."
+            },
+            "defaultValue": "contoso.com"
         }        
     },
     "functions": [],
     "variables": {
         "bastionHostIpAddressName": "[concat(parameters('bastionHostName'),'-Ip')]",
+        "vmNetworkInterfaceName": "[concat(parameters('vmName'), '-Nic')]",
+        "vmOsDiskName": "[concat(parameters('vmName'), '-Disk')]",
         "dscModules": {
             "ActiveDirectoryDsc": {
                 "name": "ActiveDirectoryDsc",
@@ -87,9 +89,7 @@
                 "uri": "https://raw.githubusercontent.com/www42/arm/master/dscConfigs/ADDomain_NewForest_paramCredentials.ps1",
                 "domainName": "[parameters('domainName')]"
             }
-        },
-        "vmNetworkInterfaceName": "[concat(parameters('vmName'), '-Nic')]",
-        "vmOsDiskName": "[concat(parameters('vmName'), '-Disk')]"
+        }
     },
     "resources": [
         {
@@ -160,80 +160,13 @@
             }
         },
         {
-            "name": "[parameters('automationAccountName')]",
-            "type": "Microsoft.Automation/automationAccounts",
-            "apiVersion": "2015-10-31",
-            "location": "[parameters('location')]",
-            "tags": {},
-            "properties": {
-                "sku": {
-                    "name": "Free"
-                }
-            },
-            "resources": [
-                {
-                    "name": "[variables('dscModules').ActiveDirectoryDsc.name]",
-                    "type": "modules",
-                    "apiVersion": "2015-10-31",
-                    "location": "[parameters('location')]",
-                    "dependsOn": [
-                        "[parameters('automationAccountName')]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('dscModules').ActiveDirectoryDsc.uri]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('dscConfigurations').DomainControllerConfig.name]",
-                    "type": "configurations",
-                    "apiVersion": "2015-10-31",
-                    "location": "[parameters('location')]",
-                    "tags": {},
-                    "dependsOn": [
-                        "[parameters('automationAccountName')]"
-                    ],
-                    "properties": {
-                        "description": "[variables('dscConfigurations').DomainControllerConfig.description]",
-                        "source": {
-                            "type": "uri",
-                            "value": "[variables('dscConfigurations').DomainControllerConfig.uri]"
-                        },
-                        "state": "Published",
-                        "overwrite": true,
-                        "logProgress": true,
-                        "logVerbose": false,
-                        "parameters": {}                        
-                    }
-                },
-                {
-                    "name": "DomainControllerConfigCompile",
-                    "type": "compilationjobs",
-                    "apiVersion": "2018-01-15",
-                    "dependsOn": [
-                        "[parameters('automationAccountName')]",
-                        "[variables('dscModules').ActiveDirectoryDsc.name]",                        
-                        "[variables('dscConfigurations').DomainControllerConfig.name]"
-                    ],
-                    "properties": {
-                        "configuration": {
-                            "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
-                        },
-                        "parameters": {
-                            "DomainName": "[variables('dscConfigurations').DomainControllerConfig.domainName]",
-                            "DomainAdminName": "[parameters('adminUserName')]",
-                            "DomainAdminPassword": "[parameters('adminPassword')]"
-                        }
-                    }
-                }
-            ]
-        },
-        {
            "type": "Microsoft.Network/networkInterfaces",
            "name": "[variables('vmNetworkInterfaceName')]",
            "apiVersion": "2019-11-01",
            "location": "[parameters('location')]",
+           "dependsOn": [
+               "[parameters('virtualNetworkName')]"
+           ],
            "properties": {
                "ipConfigurations": [
                    {
@@ -346,6 +279,76 @@
                     }
                 }
             }
+        },
+        {
+            "name": "[parameters('automationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2015-10-31",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "properties": {
+                "sku": {
+                    "name": "Free"
+                }
+            },
+            "resources": [
+                {
+                    "name": "[variables('dscModules').ActiveDirectoryDsc.name]",
+                    "type": "modules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('dscModules').ActiveDirectoryDsc.uri]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('dscConfigurations').DomainControllerConfig.name]",
+                    "type": "configurations",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('location')]",
+                    "tags": {},
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]"
+                    ],
+                    "properties": {
+                        "description": "[variables('dscConfigurations').DomainControllerConfig.description]",
+                        "source": {
+                            "type": "uri",
+                            "value": "[variables('dscConfigurations').DomainControllerConfig.uri]"
+                        },
+                        "state": "Published",
+                        "overwrite": true,
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "parameters": {}                        
+                    }
+                },
+                {
+                    "name": "DomainControllerConfigCompile",
+                    "type": "compilationjobs",
+                    "apiVersion": "2018-01-15",
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]",
+                        "[variables('dscModules').ActiveDirectoryDsc.name]",                        
+                        "[variables('dscConfigurations').DomainControllerConfig.name]"
+                    ],
+                    "properties": {
+                        "configuration": {
+                            "name": "[variables('dscConfigurations').DomainControllerConfig.name]"
+                        },
+                        "parameters": {
+                            "DomainName": "[variables('dscConfigurations').DomainControllerConfig.domainName]",
+                            "DomainAdminName": "[parameters('adminUserName')]",
+                            "DomainAdminPassword": "[parameters('adminPassword')]"
+                        }
+                    }
+                }
+            ]
         }
     ],
     "outputs": {}
