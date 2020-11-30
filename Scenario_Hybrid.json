@@ -227,7 +227,8 @@
             "apiVersion": "2019-07-01",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[parameters('vmName')]"
+                "[parameters('vmName')]",
+                "DomainControllerConfigCompile"
             ],
             "properties": {
                 "type": "DSC",
