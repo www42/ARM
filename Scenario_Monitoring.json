@@ -52,7 +52,7 @@
         },
         "workspaceName": {
             "type": "string",
-            "defaultValue": "workspace691184711",
+            "defaultValue": "workspace69118afnfiiegv",
             "metadata": {
                 "description": "Name of the workspace. The workspace name should include 4-63 letters, digits or '-'. The '-' shouldn't be the first or the last symbol."
             }
