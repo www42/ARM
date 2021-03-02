@@ -1,0 +1,34 @@
+
+# Tenant fqdn
+ran=$((1000 + $RANDOM % 8999))
+adatum="adatum$ran"
+fqdn="adatum$ran.onmicrosoft.com"
+echo $fqdn
+
+# Account admin (aa)
+aa="AccountAdmin@$fqdn"
+
+# Create tenant in keepass
+
+# Create tenant
+# https://account.azure.com/organization
+#
+# First name: Account
+# Last name: Admin
+# Business email address: aa@adatum.com  (fake)
+# Business phone number:  +49123456789  (fake)
+# Company name:           Adatum
+echo $adatum
+echo $aa
+# Verify your identity:  +49  15126358905   (true)
+
+# Azure Pass
+# https://vouchers.cloudapp.net/AzurePass/
+# 
+# Login:    thomas_jaekel@hotmail.com
+# MCP ID:   1127819
+#
+# https://www.microsoftazurepass.com/
+
+
+# Tenant Security defaults
