@@ -3,7 +3,7 @@
 # Tenant ID:        819ebf55-0973-4703-b006-581a48f25961
 
 # Azure Pass        Paul@adatum6404.onmicrosoft.com
-# Subscription ID:  c46281f7-38b7-4e1d-ba22-140cd892cd07
+# Subscription ID:  bd91dc26-8119-4bbf-882f-84be1cf33026
 # Tenant ID:        89ee3811-46d2-4152-af70-352fcce4d323
 
 Logout-AzAccount
