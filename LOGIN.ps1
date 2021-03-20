@@ -12,7 +12,7 @@ Login-AzAccount
 Get-AzContext | fl
 Get-AzSubscription | ft Name,Id,State
 
-$subscriptionId = 'c46281f7-38b7-4e1d-ba22-140cd892cd07'
+$subscriptionId = 'bd91dc26-8119-4bbf-882f-84be1cf33026'
 Set-AzContext -Subscription $subscriptionId
 
 Get-AzContext | fl Account,Subscription,Tenant
