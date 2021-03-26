@@ -2,21 +2,21 @@
 param location string = resourceGroup().location
 
 // Hub network
-param vnetHubName string = 'Hub'
-param vnetHubAddressSpace string = '172.16.0.0/16'
-param vnetHubSubnetName string = 'Subnet0'
-param vnetHubSubnetAddressPrefix string = '172.16.0.0/24'
+param vnetHubName string                   = 'Hub'
+param vnetHubAddressSpace string           = '172.16.0.0/16'
+param vnetHubSubnetName string             = 'Subnet0'
+param vnetHubSubnetAddressPrefix string    = '172.16.0.0/24'
 
 // Spoke1 network
-param vnetSpoke1Name string = 'Spoke1'
-param vnetSpoke1AddressSpace string = '172.17.0.0/16'
-param vnetSpoke1SubnetName string = 'Subnet0'
+param vnetSpoke1Name string                = 'Spoke1'
+param vnetSpoke1AddressSpace string        = '172.17.0.0/16'
+param vnetSpoke1SubnetName string          = 'Subnet0'
 param vnetSpoke1SubnetAddressPrefix string = '172.17.0.0/24'
 
 // Spoke2 network
-param vnetSpoke2Name string = 'Spoke2'
-param vnetSpoke2AddressSpace string = '172.18.0.0/16'
-param vnetSpoke2SubnetName string = 'Subnet0'
+param vnetSpoke2Name string                = 'Spoke2'
+param vnetSpoke2AddressSpace string        = '172.18.0.0/16'
+param vnetSpoke2SubnetName string          = 'Subnet0'
 param vnetSpoke2SubnetAddressPrefix string = '172.18.0.0/24'
 
 resource hub 'Microsoft.Network/virtualNetworks@2020-06-01' = {
@@ -106,8 +106,6 @@ resource spoke1hubpeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeeri
     useRemoteGateways: false
   }
 }
-
-
 
 output hubName string = hub.name
 output spoke1Name string = spoke1.name
