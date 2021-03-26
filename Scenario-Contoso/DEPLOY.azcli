@@ -1,3 +1,5 @@
+location='westeurope'
+
 # --- Subscription deployment ------------------
 file=main.bicep
 az deployment sub list --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp,duration:properties.duration}, &timestamp)) | [0:4]" --output table
@@ -13,8 +15,6 @@ rgName='Contoso-RG'
 az resource list --resource-group $rgName --query "sort_by([].{name:name,Type:type,location:location},&Type)" --output table
 az deployment group list --resource-group $rgName --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp))" --output table
 
-# --- Location ------------------
-location='westeurope'
 
 # --- Subscription ------------------
 az account set --subscription $subscriptionId
