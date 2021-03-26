@@ -30,7 +30,6 @@ module networkDeploy 'network.bicep' = {
     vnetSpoke2SubnetAddressPrefix: vnetSpoke2SubnetAddressPrefix
   }
 }
-/*
 module bastionDeploy 'bastion.bicep' = {
   name: 'bastionDeploy'
   scope: rg
@@ -56,4 +55,3 @@ module dcDeploy 'dc.bicep' = {
     aaJobName: automationDeploy.outputs.automationAccountJobName
   }
 }
-*/
