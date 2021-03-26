@@ -82,6 +82,21 @@ resource spoke2 'Microsoft.Network/virtualNetworks@2020-06-01' = {
     ]
   }
 }
+resource hubspoke1peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-07-01' = {
+  name: '${vnetHubName}/${vnetHubName}-to-${vnetSpoke1Name}-Peering'
+  properties: {
+    allowVirtualNetworkAccess: true
+    allowForwardedTraffic: true
+    allowGatewayTransit: true
+    useRemoteGateways: false
+    remoteVirtualNetwork: {
+      id: spoke1.id
+    }
+  }
+}
+
+
+
 output hubName string = hub.name
 output spoke1Name string = spoke1.name
 output spoke2Name string = spoke2.name
