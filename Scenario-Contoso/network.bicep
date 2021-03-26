@@ -82,16 +82,28 @@ resource spoke2 'Microsoft.Network/virtualNetworks@2020-06-01' = {
     ]
   }
 }
-resource hubspoke1peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-07-01' = {
+resource hubspoke1peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
   name: '${vnetHubName}/${vnetHubName}-to-${vnetSpoke1Name}-Peering'
   properties: {
+    remoteVirtualNetwork: {
+      id: spoke1.id
+    }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
     allowGatewayTransit: true
     useRemoteGateways: false
+  }
+}
+resource spoke1hubpeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
+  name: '${vnetSpoke1Name}/${vnetSpoke1Name}-to-${vnetHubName}-Peering'
+  properties: {
     remoteVirtualNetwork: {
-      id: spoke1.id
+      id: hub.id
     }
+    allowVirtualNetworkAccess: true
+    allowForwardedTraffic: true
+    allowGatewayTransit: true
+    useRemoteGateways: false
   }
 }
 
