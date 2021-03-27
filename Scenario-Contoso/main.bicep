@@ -4,6 +4,8 @@ param rgName string = 'Contoso-RG'
 
 var vnetHubAddressSpace           = '172.16.0.0/16'
 var vnetHubSubnetAddressPrefix    = '172.16.0.0/24'
+var gatewaySubnetPrefix           = '172.16.255.0/27'
+var gatewayNetwork                = 'networkDeploy.outputs.hubName'
 
 var vnetSpoke1AddressSpace        = '172.17.0.0/16'
 var vnetSpoke1SubnetAddressPrefix = '172.17.0.0/24'
@@ -55,15 +57,20 @@ module dcDeploy 'dc.bicep' = {
     aaJobName: automationDeploy.outputs.automationAccountJobName
   }
 }
-*/
 /*
-When deploying the gateway in 
-    module gatewayDeployment 'gateway.bicep' = {}
-remember to allow usage of remote gateway in Spoke1-to-Hub-Peering.
+When deploying the gateway remember to allow usage of remote gateway 
+in Spoke1-to-Hub-Peering.
 
-In
-    module networkDeploy 'network.bicep' = {}
-it's not possible to set because at this time there is no gateway yet:
+In module networkDeploy it's not possible to set 
+because at this time there is no gateway yet:
     "Spoke1-to-Hub-Peering cannot have UseRemoteGateway flag set to true 
      because remote virtual network Hub referenced by the peering does not have any gateways."
 */
+module gatewayDeploy 'gateway.bicep' = {
+  name: 'gatewayDeploy'
+  scope: rg
+  params: {
+    gatewayNetwork: gatewayNetwork
+    gatewaySubnetPrefix: gatewaySubnetPrefix
+  }
+}
