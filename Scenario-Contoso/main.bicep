@@ -5,12 +5,12 @@ param rgName string = 'Contoso-RG'
 var vnetHubAddressSpace           = '172.16.0.0/16'
 var vnetHubSubnetAddressPrefix    = '172.16.0.0/24'
 var gatewaySubnetPrefix           = '172.16.255.0/27'
-var gatewayNetwork                = 'networkDeploy.outputs.hubName'
+//var foo                           = 'networkDeploy.outputs.hubName'
 
 var vnetSpoke1AddressSpace        = '172.17.0.0/16'
 var vnetSpoke1SubnetAddressPrefix = '172.17.0.0/24'
 var vmDcIp                        = '172.17.0.200'
-var bastionVnetName               = 'networkDeploy.outputs.spoke1Name'
+//var bastionVnetName               = 'networkDeploy.outputs.spoke1Name'
 var bastionSubnetPrefix           = '172.17.255.0/27'
 
 var vnetSpoke2AddressSpace        = '172.18.0.0/16'
@@ -36,7 +36,8 @@ module bastionDeploy 'bastion.bicep' = {
   name: 'bastionDeploy'
   scope: rg
   params: {
-    vnetName: bastionVnetName
+    //vnetName: bastionVnetName
+    vnetName: networkDeploy.outputs.spoke1Name
     bastionSubnetPrefix: bastionSubnetPrefix
   }
 }
@@ -70,7 +71,8 @@ module gatewayDeploy 'gateway.bicep' = {
   name: 'gatewayDeploy'
   scope: rg
   params: {
-    gatewayNetwork: gatewayNetwork
+    //gatewayNetwork: foo
+    gatewayNetwork: networkDeploy.outputs.hubName
     gatewaySubnetPrefix: gatewaySubnetPrefix
   }
 }
