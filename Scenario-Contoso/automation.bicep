@@ -1,5 +1,6 @@
 // Automation account
 param aaName string
+param deployAaJob bool = true
 
 // PowerShell modules
 param aaModuleName string = 'ActiveDirectoryDsc'
@@ -46,7 +47,7 @@ resource aaConfiguration 'Microsoft.Automation/automationAccounts/configurations
 
 // Bug: Automation account jobs are not idempotent :-(
 // https://feedback.azure.com/forums/246290-automation/suggestions/33065122-redeploying-jobschedule-resource-from-arm-template
-resource aaJob 'Microsoft.Automation/automationAccounts/compilationjobs@2020-01-13-preview' = {
+resource aaJob 'Microsoft.Automation/automationAccounts/compilationjobs@2020-01-13-preview' = if (deployAaJob) {
   name: '${aa.name}/${aaJobName}'
   dependsOn: [
     aaModule

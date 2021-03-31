@@ -8,10 +8,12 @@ param vmSubnetId string
 param vmSize string = 'Standard_DS2_v2'
 param vmAdminUserName string = 'Student'
 param vmAdminPassword string = 'Pa55w.rd1234'
-param aaId string
-param aaConfiguration string = 'ADDomain_NewForest.localhost'
 
-resource dc 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+// Automation account
+param aaId string
+param aaConfiguration string
+
+resource vm 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   name: vmName
   location: location
   properties: {
@@ -35,20 +37,17 @@ resource dc 'Microsoft.Compute/virtualMachines@2020-06-01' = {
       computerName: '${vmName}'
       adminUsername: vmAdminUserName
       adminPassword: vmAdminPassword
-      windowsConfiguration: {
-        timeZone: 'W. Europe Standard Time'
-      }
     }
     networkProfile:{
       networkInterfaces: [
         {
-          id: dcNic.id
+          id: vmNic.id
         }
       ]
     }
   }
 }
-resource dcNic 'Microsoft.Network/networkInterfaces@2020-06-01' = {
+resource vmNic 'Microsoft.Network/networkInterfaces@2020-06-01' = {
   name: '${vmName}-Nic'
   location: location
   properties: {
@@ -66,8 +65,8 @@ resource dcNic 'Microsoft.Network/networkInterfaces@2020-06-01' = {
     ]
   }
 }
-resource dcExtension 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
-  name: '${dc.name}/Dsc'
+resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
+  name: '${vm.name}/Dsc'
   location: location
   properties: {
     type: 'DSC'

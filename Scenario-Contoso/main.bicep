@@ -14,22 +14,20 @@ module networkDeploy 'network.bicep' = {
     vnet0Name:                'Hub'
     vnet0AddressSpace:        '10.0.0.0/16'
     vnet0SubnetAddressPrefix: '10.0.0.0/24'
+    vnet0BastionSubnetPrefix: '10.0.255.0/27'
+    deployVnet0Bastion:       false
     // Spoke1
     vnet1Name:                'Spoke1'
     vnet1AddressSpace:        '10.1.0.0/16'
     vnet1SubnetAddressPrefix: '10.1.0.0/24'
+    vnet1BastionSubnetPrefix: '10.1.255.0/27'
+    deployVnet1Bastion:       true
     // Spoke 2
     vnet2Name:                'Spoke2'
     vnet2AddressSpace:        '10.2.0.0/16'
     vnet2SubnetAddressPrefix: '10.2.0.0/24'
-  }
-}
-module spoke1BastionDeploy 'bastion.bicep' = {
-  name: 'bastionDeploy'
-  scope: rg
-  params: {
-    vnetName: networkDeploy.outputs.spoke1Name
-    bastionSubnetPrefix: '10.1.255.0/27'
+    vnet2BastionSubnetPrefix: '10.2.255.0/27'
+    deployVnet2Bastion:       true
   }
 }
 // Remember: Automation account jobs are not idempotent!
@@ -38,18 +36,21 @@ module automationDeploy 'automation.bicep' = {
   scope: rg
   params: {
     aaName: 'Contoso-Automation'
+    deployAaJob: false
   }
 }
 module dcDeploy 'vm.bicep' = {
   name: 'dcDeploy'
   scope: rg
   params: {
-    vmName: 'DC1'
-    vmIp: '10.1.0.200'
-    vmSubnetId: networkDeploy.outputs.spoke1SubnetId
-    aaId: automationDeploy.outputs.automationAccountId
+    vmName:           'DC1'
+    vmIp:             '10.1.0.200'
+    vmSubnetId:       networkDeploy.outputs.spoke1SubnetId
+    aaId:             automationDeploy.outputs.automationAccountId
+    aaConfiguration: 'ADDomain_NewForest.localhost'
   }
 }
+/*
 module vm1Deploy 'vm.bicep' = {
   name: 'vm1Deploy'
   scope: rg
@@ -58,9 +59,10 @@ module vm1Deploy 'vm.bicep' = {
     vmIp: '10.2.0.200'
     vmSubnetId: networkDeploy.outputs.spoke2SubnetId
     aaId: automationDeploy.outputs.automationAccountId
+    aaConfiguration: ''
   }
 }
-
+*/
 /*
 When deploying the gateway remember to allow usage of remote gateway 
 in Spoke1-to-Hub-Peering.
@@ -70,7 +72,7 @@ because at this time there is no gateway yet:
     "Spoke1-to-Hub-Peering cannot have UseRemoteGateway flag set to true 
      because remote virtual network Hub referenced by the peering does not have any gateways."
 */
-
+/*
 module gatewayDeploy 'gateway.bicep' = {
   name: 'gatewayDeploy'
   scope: rg
@@ -80,3 +82,4 @@ module gatewayDeploy 'gateway.bicep' = {
     gatewaySubnetPrefix: '10.0.255.32/27'
   }
 }
+*/
