@@ -3,7 +3,7 @@ location='westeurope'
 # --- Subscription deployment ------------------
 file=main.bicep
 az deployment sub list --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp,duration:properties.duration}, &timestamp)) | [0:4]" --output table
-az deployment sub create --template-file $file --location $location --name 'contosoDeploy'  -c      # -c --> WhatIf
+az deployment sub create --template-file $file --location $location --name 'contosoDeploy'    -c   # -c --> WhatIf
 
 # --- Group ------------------
 az deployment group create --name 'tabulaRasa' --resource-group $rgName --mode Complete --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/empty.json" --no-wait
@@ -19,3 +19,6 @@ subscriptionId='bd91dc26-8119-4bbf-882f-84be1cf33026'
 az account list --query "[].{name:name,isDefault:isDefault,state:state,subscriptionId:id,user:user.name}" --output table && echo
 az login
 az logout
+
+az deployment group create --resource-group Test-Bicep --template-file ./testvnet.bicep -c
+az deployment group create --resource-group Test-Bicep --template-file ./testsubnet.bicep --parameters vnetName=vnet1 -c

@@ -1,9 +1,16 @@
-param location string = resourceGroup().location
+// Automation account
 param aaName string
+
+// PowerShell modules
 param aaModuleName string = 'ActiveDirectoryDsc'
 param aaModuleContentLink string = 'https://psg-prod-eastus.azureedge.net/packages/activedirectorydsc.6.0.1.nupkg'
+
+// DSC configurations
 param aaConfigurationName string = 'ADDomain_NewForest'
 param aaConfigurationSourceUri string = 'https://raw.githubusercontent.com/www42/arm/master/dscConfigs/ADDomain_NewForest_paramCredentials.ps1'
+
+// Location
+param location string = resourceGroup().location
 
 var aaJobName = '${aaConfigurationName}-Compile'
 
@@ -36,6 +43,9 @@ resource aaConfiguration 'Microsoft.Automation/automationAccounts/configurations
     logVerbose: true
   }
 }
+
+// Bug: Automation account jobs are not idempotent :-(
+// https://feedback.azure.com/forums/246290-automation/suggestions/33065122-redeploying-jobschedule-resource-from-arm-template
 resource aaJob 'Microsoft.Automation/automationAccounts/compilationjobs@2020-01-13-preview' = {
   name: '${aa.name}/${aaJobName}'
   dependsOn: [
@@ -53,6 +63,4 @@ resource aaJob 'Microsoft.Automation/automationAccounts/compilationjobs@2020-01-
     }
   }
 }
-output automationAccountName string = aa.name
-output automationAccountJobName string = aaJob.name
 output automationAccountId string = aa.id

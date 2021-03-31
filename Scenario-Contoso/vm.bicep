@@ -1,20 +1,22 @@
+// Location
 param location string = resourceGroup().location
+
+// Virtual machine
+param vmName string
+param vmIp string
+param vmSubnetId string
+param vmSize string = 'Standard_DS2_v2'
 param vmAdminUserName string = 'Student'
 param vmAdminPassword string = 'Pa55w.rd1234'
-param vmDcName string = 'DC'
-param vmDcSize string = 'Standard_DS2_v2'
-param vmDcSubnetId string
-param vmDcIp string
-param vmDcNodeConfigurationName string = 'ADDomain_NewForest.localhost'
 param aaId string
-param aaJobName string
+param aaConfiguration string = 'ADDomain_NewForest.localhost'
 
 resource dc 'Microsoft.Compute/virtualMachines@2020-06-01' = {
-  name: vmDcName
+  name: vmName
   location: location
   properties: {
     hardwareProfile: {
-      vmSize: vmDcSize
+      vmSize: vmSize
     }
     storageProfile: {
       imageReference:{
@@ -24,13 +26,13 @@ resource dc 'Microsoft.Compute/virtualMachines@2020-06-01' = {
         version: 'latest'
       }
       osDisk: {
-        name: '${vmDcName}-Disk'
+        name: '${vmName}-Disk'
         caching: 'ReadWrite'
         createOption: 'FromImage'
       }
     }
     osProfile: {
-      computerName: '${vmDcName}'
+      computerName: '${vmName}'
       adminUsername: vmAdminUserName
       adminPassword: vmAdminPassword
       windowsConfiguration: {
@@ -47,7 +49,7 @@ resource dc 'Microsoft.Compute/virtualMachines@2020-06-01' = {
   }
 }
 resource dcNic 'Microsoft.Network/networkInterfaces@2020-06-01' = {
-  name: '${vmDcName}-Nic'
+  name: '${vmName}-Nic'
   location: location
   properties: {
     ipConfigurations: [
@@ -55,9 +57,9 @@ resource dcNic 'Microsoft.Network/networkInterfaces@2020-06-01' = {
         name: 'ipConfig1'
         properties: {
           privateIPAllocationMethod: 'Static'
-          privateIPAddress: vmDcIp
+          privateIPAddress: vmIp
           subnet: {
-            id: vmDcSubnetId
+            id: vmSubnetId
           }
         }
       }
@@ -94,7 +96,7 @@ resource dcExtension 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' =
         }
         {
           Name: 'NodeConfigurationName'
-          Value: vmDcNodeConfigurationName
+          Value: aaConfiguration
           TypeName: 'System.String'
         }
         {

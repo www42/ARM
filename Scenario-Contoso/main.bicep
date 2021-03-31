@@ -2,20 +2,6 @@ targetScope = 'subscription'
 
 param rgName string = 'Contoso-RG'
 
-var vnetHubAddressSpace           = '172.16.0.0/16'
-var vnetHubSubnetAddressPrefix    = '172.16.0.0/24'
-var gatewaySubnetPrefix           = '172.16.255.0/27'
-//var foo                           = 'networkDeploy.outputs.hubName'
-
-var vnetSpoke1AddressSpace        = '172.17.0.0/16'
-var vnetSpoke1SubnetAddressPrefix = '172.17.0.0/24'
-var vmDcIp                        = '172.17.0.200'
-//var bastionVnetName               = 'networkDeploy.outputs.spoke1Name'
-var bastionSubnetPrefix           = '172.17.255.0/27'
-
-var vnetSpoke2AddressSpace        = '172.18.0.0/16'
-var vnetSpoke2SubnetAddressPrefix = '172.18.0.0/24'
-
 resource rg 'Microsoft.Resources/resourceGroups@2020-10-01' = {
   name: rgName
   location: deployment().location
@@ -24,23 +10,29 @@ module networkDeploy 'network.bicep' = {
   name: 'networkDeploy'
   scope: rg
   params: {
-    vnetHubAddressSpace: vnetHubAddressSpace
-    vnetHubSubnetAddressPrefix: vnetHubSubnetAddressPrefix
-    vnetSpoke1AddressSpace: vnetSpoke1AddressSpace
-    vnetSpoke1SubnetAddressPrefix: vnetSpoke1SubnetAddressPrefix
-    vnetSpoke2AddressSpace: vnetSpoke2AddressSpace
-    vnetSpoke2SubnetAddressPrefix: vnetSpoke2SubnetAddressPrefix
+    // Hub
+    vnet0Name:                'Hub'
+    vnet0AddressSpace:        '10.0.0.0/16'
+    vnet0SubnetAddressPrefix: '10.0.0.0/24'
+    // Spoke1
+    vnet1Name:                'Spoke1'
+    vnet1AddressSpace:        '10.1.0.0/16'
+    vnet1SubnetAddressPrefix: '10.1.0.0/24'
+    // Spoke 2
+    vnet2Name:                'Spoke2'
+    vnet2AddressSpace:        '10.2.0.0/16'
+    vnet2SubnetAddressPrefix: '10.2.0.0/24'
   }
 }
-module bastionDeploy 'bastion.bicep' = {
+module spoke1BastionDeploy 'bastion.bicep' = {
   name: 'bastionDeploy'
   scope: rg
   params: {
-    //vnetName: bastionVnetName
     vnetName: networkDeploy.outputs.spoke1Name
-    bastionSubnetPrefix: bastionSubnetPrefix
+    bastionSubnetPrefix: '10.1.255.0/27'
   }
 }
+// Remember: Automation account jobs are not idempotent!
 module automationDeploy 'automation.bicep' = {
   name: 'automationDeploy'
   scope: rg
@@ -48,16 +40,27 @@ module automationDeploy 'automation.bicep' = {
     aaName: 'Contoso-Automation'
   }
 }
-module dcDeploy 'dc.bicep' = {
+module dcDeploy 'vm.bicep' = {
   name: 'dcDeploy'
   scope: rg
   params: {
-    vmDcIp: vmDcIp
-    vmDcSubnetId: networkDeploy.outputs.spoke1SubnetId
+    vmName: 'DC1'
+    vmIp: '10.1.0.200'
+    vmSubnetId: networkDeploy.outputs.spoke1SubnetId
     aaId: automationDeploy.outputs.automationAccountId
-    aaJobName: automationDeploy.outputs.automationAccountJobName
   }
 }
+module vm1Deploy 'vm.bicep' = {
+  name: 'vm1Deploy'
+  scope: rg
+  params: {
+    vmName: 'VM2'
+    vmIp: '10.2.0.200'
+    vmSubnetId: networkDeploy.outputs.spoke2SubnetId
+    aaId: automationDeploy.outputs.automationAccountId
+  }
+}
+
 /*
 When deploying the gateway remember to allow usage of remote gateway 
 in Spoke1-to-Hub-Peering.
@@ -67,12 +70,13 @@ because at this time there is no gateway yet:
     "Spoke1-to-Hub-Peering cannot have UseRemoteGateway flag set to true 
      because remote virtual network Hub referenced by the peering does not have any gateways."
 */
+
 module gatewayDeploy 'gateway.bicep' = {
   name: 'gatewayDeploy'
   scope: rg
   params: {
     //gatewayNetwork: foo
     gatewayNetwork: networkDeploy.outputs.hubName
-    gatewaySubnetPrefix: gatewaySubnetPrefix
+    gatewaySubnetPrefix: '10.0.255.32/27'
   }
 }

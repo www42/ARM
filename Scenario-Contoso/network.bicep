@@ -1,38 +1,38 @@
 // Location
 param location string = resourceGroup().location
 
-// Hub network
-param vnetHubName string                   = 'Hub'
-param vnetHubAddressSpace string           = '172.16.0.0/16'
-param vnetHubSubnetName string             = 'Subnet0'
-param vnetHubSubnetAddressPrefix string    = '172.16.0.0/24'
+// vnet0
+param vnet0Name string                   = 'Hub'
+param vnet0AddressSpace string           = '10.0.0.0/16'
+param vnet0SubnetName string             = 'Subnet0'
+param vnet0SubnetAddressPrefix string    = '10.0.0.0/24'
 
-// Spoke1 network
-param vnetSpoke1Name string                = 'Spoke1'
-param vnetSpoke1AddressSpace string        = '172.17.0.0/16'
-param vnetSpoke1SubnetName string          = 'Subnet0'
-param vnetSpoke1SubnetAddressPrefix string = '172.17.0.0/24'
+// vnet1
+param vnet1Name string                   = 'Spoke1'
+param vnet1AddressSpace string           = '10.1.0.0/16'
+param vnet1SubnetName string             = 'Subnet0'
+param vnet1SubnetAddressPrefix string    = '10.1.0.0/24'
 
-// Spoke2 network
-param vnetSpoke2Name string                = 'Spoke2'
-param vnetSpoke2AddressSpace string        = '172.18.0.0/16'
-param vnetSpoke2SubnetName string          = 'Subnet0'
-param vnetSpoke2SubnetAddressPrefix string = '172.18.0.0/24'
+// vnet2
+param vnet2Name string                   = 'Spoke2'
+param vnet2AddressSpace string           = '10.2.0.0/16'
+param vnet2SubnetName string             = 'Subnet0'
+param vnet2SubnetAddressPrefix string    = '10.2.0.0/24'
 
-resource hub 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: vnetHubName
+resource vnet0 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: vnet0Name
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vnetHubAddressSpace
+        vnet0AddressSpace
       ]
     }
     subnets: [
       {
-        name: vnetHubSubnetName
+        name: vnet0SubnetName
         properties: {
-          addressPrefix: vnetHubSubnetAddressPrefix
+          addressPrefix: vnet0SubnetAddressPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
         }
@@ -40,20 +40,20 @@ resource hub 'Microsoft.Network/virtualNetworks@2020-06-01' = {
     ]
   }
 }
-resource spoke1 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: vnetSpoke1Name
+resource vnet1 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: vnet1Name
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vnetSpoke1AddressSpace
+        vnet1AddressSpace
       ]
     }
     subnets: [
       {
-        name: vnetSpoke1SubnetName
+        name: vnet1SubnetName
         properties: {
-          addressPrefix: vnetSpoke1SubnetAddressPrefix
+          addressPrefix: vnet1SubnetAddressPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
         }
@@ -61,20 +61,20 @@ resource spoke1 'Microsoft.Network/virtualNetworks@2020-06-01' = {
     ]
   }
 }
-resource spoke2 'Microsoft.Network/virtualNetworks@2020-06-01' = {
-  name: vnetSpoke2Name
+resource vnet2 'Microsoft.Network/virtualNetworks@2020-06-01' = {
+  name: vnet2Name
   location: location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        vnetSpoke2AddressSpace
+        vnet2AddressSpace
       ]
     }
     subnets: [
       {
-        name: vnetSpoke2SubnetName
+        name: vnet2SubnetName
         properties: {
-          addressPrefix: vnetSpoke2SubnetAddressPrefix
+          addressPrefix: vnet2SubnetAddressPrefix
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
         }
@@ -82,11 +82,11 @@ resource spoke2 'Microsoft.Network/virtualNetworks@2020-06-01' = {
     ]
   }
 }
-resource hubspoke1peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
-  name: '${vnetHubName}/${vnetHubName}-to-${vnetSpoke1Name}-Peering'
+resource vnet0vnet1peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
+  name: '${vnet0Name}/${vnet0Name}-to-${vnet1Name}-Peering'
   properties: {
     remoteVirtualNetwork: {
-      id: spoke1.id
+      id: vnet1.id
     }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
@@ -94,11 +94,11 @@ resource hubspoke1peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeeri
     useRemoteGateways: false
   }
 }
-resource spoke1hubpeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
-  name: '${vnetSpoke1Name}/${vnetSpoke1Name}-to-${vnetHubName}-Peering'
+resource vnet1vnet0peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
+  name: '${vnet1Name}/${vnet1Name}-to-${vnet0Name}-Peering'
   properties: {
     remoteVirtualNetwork: {
-      id: hub.id
+      id: vnet0.id
     }
     allowVirtualNetworkAccess: true
     allowForwardedTraffic: true
@@ -107,9 +107,9 @@ resource spoke1hubpeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeeri
   }
 }
 
-output hubName string = hub.name
-output spoke1Name string = spoke1.name
-output spoke2Name string = spoke2.name
-output hubSubnetId string = hub.properties.subnets[0].id
-output spoke1SubnetId string = spoke1.properties.subnets[0].id
-output spoke2SubnetId string = spoke2.properties.subnets[0].id
+output hubName        string = vnet0.name
+output spoke1Name     string = vnet1.name
+output spoke2Name     string = vnet2.name
+output hubSubnetId    string = vnet0.properties.subnets[0].id
+output spoke1SubnetId string = vnet1.properties.subnets[0].id
+output spoke2SubnetId string = vnet2.properties.subnets[0].id
