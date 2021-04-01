@@ -81,14 +81,6 @@ resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' =
     settings: {
       Properties: [
         {
-          Name: 'RegistrationKey'
-          Value: {
-            UserName: 'PLACEHOLDER_DONOTUSE'
-            Password: 'PrivateSettingsRef:registrationKeyPrivate'
-          }
-          TypeName: 'System.Management.Automation.PSCredential'
-        }
-        {
           Name: 'RegistrationUrl'
           Value: reference(aaId, '2020-01-13-preview').registrationUrl
           TypeName: 'System.String'
@@ -97,6 +89,14 @@ resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' =
           Name: 'NodeConfigurationName'
           Value: aaConfiguration
           TypeName: 'System.String'
+        }
+        {
+          Name: 'RegistrationKey'
+          Value: {
+            UserName: 'PLACEHOLDER_DONOTUSE'
+            Password: 'PrivateSettingsRef:registrationKeyPrivate'
+          }
+          TypeName: 'System.Management.Automation.PSCredential'
         }
         {
           Name: 'ConfigurationMode'

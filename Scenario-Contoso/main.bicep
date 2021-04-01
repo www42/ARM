@@ -39,8 +39,8 @@ module automationDeploy 'automation.bicep' = {
     deployAaJob: false
   }
 }
-module dcDeploy 'vm.bicep' = {
-  name: 'dcDeploy'
+module dc1Deploy 'vm.bicep' = {
+  name: 'dc1Deploy'
   scope: rg
   params: {
     vmName:           'DC1'
@@ -50,19 +50,17 @@ module dcDeploy 'vm.bicep' = {
     aaConfiguration: 'ADDomain_NewForest.localhost'
   }
 }
-/*
-module vm1Deploy 'vm.bicep' = {
-  name: 'vm1Deploy'
+module vm2Deploy 'vm.bicep' = {
+  name: 'vm2Deploy'
   scope: rg
   params: {
-    vmName: 'VM2'
-    vmIp: '10.2.0.200'
-    vmSubnetId: networkDeploy.outputs.spoke2SubnetId
-    aaId: automationDeploy.outputs.automationAccountId
+    vmName:          'VM2'
+    vmIp:            '10.2.0.200'
+    vmSubnetId:      networkDeploy.outputs.spoke2SubnetId
+    aaId:            automationDeploy.outputs.automationAccountId
     aaConfiguration: ''
   }
 }
-*/
 /*
 When deploying the gateway remember to allow usage of remote gateway 
 in Spoke1-to-Hub-Peering.
