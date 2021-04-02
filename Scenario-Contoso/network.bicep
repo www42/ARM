@@ -8,7 +8,8 @@ param vnet0SubnetName string             = 'Subnet0'
 param vnet0SubnetAddressPrefix string    = '10.0.0.0/24'
 param vnet0BastionSubnetName string      = 'AzureBastionSubnet' // Do not change!
 param vnet0BastionSubnetPrefix string    = '10.0.255.0/27'
-param deployVnet0Bastion bool            = false
+param vnet0GatewaySubnetName string      = 'GatewaySubnet'      // Do not change!
+param vnet0GatewaySubnetPrefix string    = '10.0.255.32/27'
 
 // vnet1
 param vnet1Name string                   = 'Spoke1'
@@ -17,7 +18,6 @@ param vnet1SubnetName string             = 'Subnet0'
 param vnet1SubnetAddressPrefix string    = '10.1.0.0/24'
 param vnet1BastionSubnetName string      = 'AzureBastionSubnet' // Do not change!
 param vnet1BastionSubnetPrefix string    = '10.1.255.0/27'
-param deployVnet1Bastion bool            = false
 
 // vnet2
 param vnet2Name string                   = 'Spoke2'
@@ -26,6 +26,10 @@ param vnet2SubnetName string             = 'Subnet0'
 param vnet2SubnetAddressPrefix string    = '10.2.0.0/24'
 param vnet2BastionSubnetName string      = 'AzureBastionSubnet' // Do not change!
 param vnet2BastionSubnetPrefix string    = '10.2.255.0/27'
+
+// Deploy bastion hosts?
+param deployVnet0Bastion bool            = false
+param deployVnet1Bastion bool            = false
 param deployVnet2Bastion bool            = false
 
 // Hub, Spoke1, Spoke2
@@ -49,6 +53,12 @@ resource vnet0 'Microsoft.Network/virtualNetworks@2020-06-01' = {
         name: vnet0BastionSubnetName
         properties: {
           addressPrefix: vnet0BastionSubnetPrefix
+        }
+      }
+      {
+        name: vnet0GatewaySubnetName
+        properties: {
+          addressPrefix: vnet0GatewaySubnetPrefix
         }
       }
     ]
@@ -218,9 +228,10 @@ resource bastionVnet2Pip 'Microsoft.Network/publicIPAddresses@2020-08-01' = if (
   }
 }
 
-// output hubName        string = vnet0.name
-// output spoke1Name     string = vnet1.name
-// output spoke2Name     string = vnet2.name
-output hubSubnetId    string = vnet0.properties.subnets[0].id
-output spoke1SubnetId string = vnet1.properties.subnets[0].id
-output spoke2SubnetId string = vnet2.properties.subnets[0].id
+output hubName            string = vnet0.name
+output spoke1Name         string = vnet1.name
+output spoke2Name         string = vnet2.name
+output hubSubnetId        string = vnet0.properties.subnets[0].id
+output hubGatewaySubnetId string = vnet0.properties.subnets[2].id
+output spoke1SubnetId     string = vnet1.properties.subnets[0].id
+output spoke2SubnetId     string = vnet2.properties.subnets[0].id

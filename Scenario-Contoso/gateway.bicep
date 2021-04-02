@@ -1,7 +1,9 @@
+// Location
 param location string = resourceGroup().location
+
+// Gateway
 param gatewayName string = 'Contoso-Gateway'
-param gatewaySubnetPrefix string
-param gatewayNetwork string
+param gatewaySubnetId string
 
 resource gateway 'Microsoft.Network/virtualNetworkGateways@2020-08-01' = {
   name: gatewayName
@@ -22,17 +24,11 @@ resource gateway 'Microsoft.Network/virtualNetworkGateways@2020-08-01' = {
             id: gatewayPip.id
           }
           subnet: {
-            id: gatewaySubnet.id
+            id: gatewaySubnetId
           }
         }
       }
     ]
-  }
-}
-resource gatewaySubnet 'Microsoft.Network/virtualNetworks/subnets@2020-08-01' = {
-  name: '${gatewayNetwork}/GatewaySubnet'
-  properties: {
-    addressPrefix: gatewaySubnetPrefix
   }
 }
 resource gatewayPip 'Microsoft.Network/publicIPAddresses@2020-08-01' = {
