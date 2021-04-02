@@ -32,6 +32,9 @@ param deployVnet0Bastion bool            = false
 param deployVnet1Bastion bool            = false
 param deployVnet2Bastion bool            = false
 
+// Does gateway exist?
+param gatewayExists bool = false
+
 // Hub, Spoke1, Spoke2
 resource vnet0 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: vnet0Name
@@ -127,7 +130,19 @@ resource vnet0vnet1peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeer
     useRemoteGateways: false
   }
 }
-resource vnet1vnet0peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = {
+resource vnet1vnet0peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = if (gatewayExists) {
+  name: '${vnet1Name}/${vnet1Name}-to-${vnet0Name}-Peering'
+  properties: {
+    remoteVirtualNetwork: {
+      id: vnet0.id
+    }
+    allowVirtualNetworkAccess: true
+    allowForwardedTraffic: true
+    allowGatewayTransit: true
+    useRemoteGateways: true
+  }
+}
+resource vnet1vnet0peering 'Microsoft.Network/virtualNetworks/virtualNetworkPeerings@2020-08-01' = if (!gatewayExists) {
   name: '${vnet1Name}/${vnet1Name}-to-${vnet0Name}-Peering'
   properties: {
     remoteVirtualNetwork: {

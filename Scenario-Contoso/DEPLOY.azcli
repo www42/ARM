@@ -3,7 +3,9 @@ location='westeurope'
 # --- Subscription deployment ------------------
 file=main.bicep
 az deployment sub list --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp,duration:properties.duration}, &timestamp)) | [0:4]" --output table
-az deployment sub create --template-file $file --location $location --name 'contosoDeploy'    -c
+az deployment sub create --template-file $file --location $location --name 'contosoDeploy' \
+                         --parameters gatewayExists=true \
+                         --confirm-with-what-if --what-if-result-format ResourceIdOnly
 
 # --- Group ------------------
 az deployment group create --name 'tabulaRasa' --resource-group $rgName --mode Complete --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/empty.json" --no-wait

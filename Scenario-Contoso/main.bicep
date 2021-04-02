@@ -33,6 +33,7 @@ module networkDeploy 'network.bicep' = {
     vnet2SubnetAddressPrefix: '10.2.0.0/24'
     vnet2BastionSubnetPrefix: '10.2.255.0/27'
     deployVnet2Bastion:       deploySpoke2Bastion
+    gatewayExists:            false
   }
 }
 // Remember: Automation account jobs are not idempotent!
