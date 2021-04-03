@@ -1,0 +1,11 @@
+rgName='Contoso-RG'
+hub='Hub'
+spoke1='Spoke1'
+
+az resource list --resource-group $rgName --query "sort_by([].{name:name,Type:type,location:location},&Type)" --output table
+
+# Hub-to-Spoke1 Peering
+az network vnet peering show `
+    --name $HubPeeringToSpoke --vnet-name $hub --resource-group $rgName `
+    --query '{name:name,peeringState:peeringState, allowGatewayTransit:allowGatewayTransit,useRemoteGateways:useRemoteGateways}' `
+    --output table
