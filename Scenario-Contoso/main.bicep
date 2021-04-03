@@ -2,10 +2,13 @@ targetScope = 'subscription'
 
 param rgName string = 'Contoso-RG'
 
+// =============================
 var deployHubBastion    = false
 var deploySpoke1Bastion = true
 var deploySpoke2Bastion = true
-var deployAaCompileJob  = true
+var deployAaCompileJob  = false
+var gwExists            = false
+// =============================
 
 resource rg 'Microsoft.Resources/resourceGroups@2020-10-01' = {
   name: rgName
@@ -33,7 +36,8 @@ module networkDeploy 'network.bicep' = {
     vnet2SubnetAddressPrefix: '10.2.0.0/24'
     vnet2BastionSubnetPrefix: '10.2.255.0/27'
     deployVnet2Bastion:       deploySpoke2Bastion
-    gatewayExists:            false
+    // Peering
+    gatewayExists:            gwExists
   }
 }
 // Remember: Automation account jobs are not idempotent!
