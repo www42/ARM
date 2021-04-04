@@ -1,14 +1,21 @@
 targetScope = 'subscription'
 
-param rgName string = 'Contoso-RG'
+param rgName string            = 'Contoso-RG'
+param deployHubBastion bool    = false
+param deploySpoke1Bastion bool = true
+param deploySpoke2Bastion bool = false
+param deployAaCompileJob bool  = true
+param gwExists  bool           = false
 
+/*
 // =============================
 var deployHubBastion    = false
 var deploySpoke1Bastion = true
 var deploySpoke2Bastion = true
-var deployAaCompileJob  = false
+var deployAaCompileJob  = true
 var gwExists            = false
 // =============================
+*/
 
 resource rg 'Microsoft.Resources/resourceGroups@2020-10-01' = {
   name: rgName
