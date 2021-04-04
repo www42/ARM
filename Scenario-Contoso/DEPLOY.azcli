@@ -9,7 +9,7 @@ az deployment sub create --template-file $file --location $location --name 'cont
         deployHubBastion=false \
         deploySpoke1Bastion=true \
         deploySpoke2Bastion=false \
-        deployAaCompileJob=true \
+        deployAaCompileJob=false \
         gwExists=false \
     --confirm-with-what-if --what-if-result-format ResourceIdOnly
 
