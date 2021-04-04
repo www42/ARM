@@ -38,7 +38,6 @@ resource gateway 'Microsoft.Network/virtualNetworkGateways@2020-08-01' = {
       vpnClientProtocols: [
         'SSTP'
         'IkeV2'
-        'OpenVPN'
       ]
       vpnClientRootCertificates: [
         {
