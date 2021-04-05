@@ -6,11 +6,11 @@ az deployment sub list --query "reverse(sort_by([].{Name:name,provisioningState:
 
 az deployment sub create --template-file $file --location $location --name 'contosoDeploy' \
     --parameters \
-        deployHubBastion=false \
+        deployHubBastion=true \
         deploySpoke1Bastion=true \
         deploySpoke2Bastion=false \
         deployAaCompileJob=false \
-        gwExists=false \
+        gwExists=true \
     --confirm-with-what-if --what-if-result-format ResourceIdOnly
 
 # --- Group ------------------
@@ -27,6 +27,3 @@ subscriptionId='bd91dc26-8119-4bbf-882f-84be1cf33026'
 az account list --query "[].{name:name,isDefault:isDefault,state:state,subscriptionId:id,user:user.name}" --output table && echo
 az login
 az logout
-
-az deployment group create --resource-group Test-Bicep --template-file ./testvnet.bicep -c
-az deployment group create --resource-group Test-Bicep --template-file ./testsubnet.bicep --parameters vnetName=vnet1 -c

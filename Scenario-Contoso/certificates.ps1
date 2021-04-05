@@ -4,8 +4,8 @@ $RootCertificateName="ContosoRootCertificate"
 $ClientCertificateName="ContosoClientCertificate"
 $PfxPassword = 'Pa55w.rd1234'
 
-# Root Certificate
-# ----------------
+# 1. Root Certificate
+# -------------------
 $RootCertificate = New-SelfSignedCertificate `
     -FriendlyName $RootCertificateName `
     -Subject "CN=$RootCertificateName" `
@@ -38,8 +38,13 @@ $RootCertificate | Export-PfxCertificate -FilePath ./$RootCertificateName.pfx -P
 # Remove root cert (We have a pfx exported) 
 Remove-Item -Path $RootCertificate.PSPath
 
-# Client Certificate
-# ------------------
+# 2. Client Certificate
+# ---------------------
+
+# Import Root cert
+$RootCertificate = Import-PfxCertificate -FilePath ./$RootCertificateName.pfx -CertStoreLocation 'Cert:\CurrentUser\My' -Exportable -Password $Pass
+
+# Create client cert
 $ClientCertificate = New-SelfSignedCertificate `
     -FriendlyName $ClientCertificateName `
     -Subject "CN=$ClientCertificateName" `
@@ -52,14 +57,40 @@ $ClientCertificate = New-SelfSignedCertificate `
     -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.2") `
     -CertStoreLocation 'Cert:\CurrentUser\My'
     
-    
-    
-    
-# Clean up
 Get-ChildItem Cert:\CurrentUser\My | 
     where {$_.Subject -eq "CN=$RootCertificateName" -or $_.Subject -eq "CN=$ClientCertificateName"} | 
     ft Subject, Issuer, Thumbprint
 
+
+# 3. VPN client
+# --------------
+
+# Download VPN client
+$Uri=az network vnet-gateway vpn-client generate `
+    --processor-architecture Amd64 `
+    --name $GatewayName --resource-group $RgName `
+    --output tsv
+
+$VpnZipPath="$env:HOMEPATH\Downloads"
+
+Invoke-RestMethod -Uri $Uri -OutFile $VpnZipPath\VpnClient.zip
+
+Expand-Archive -Path $VpnZipPath\VpnClient.zip -DestinationPath $VpnZipPath\VpnClient
+
+# Install VPN client manually
+& $VpnZipPath\VpnClient\WindowsAmd64\VpnClientSetupAmd64.exe
+
+# Connect
+cmd.exe /C "start ms-settings:network-vpn"
+
+# Test connectivity
+Get-NetIPConfiguration | where InterfaceAlias -eq 'Hub'
+Test-NetConnection 10.0.0.4 -Traceroute
+Test-NetConnection 10.0.1.4 -Traceroute
+Test-NetConnection 10.0.4.4 -Traceroute
+
+# Clean up
+# --------
 Remove-Item -Path $RootCertificate.PSPath
 Remove-Item -Path $ClientCertificate.PSPath
     

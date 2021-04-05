@@ -67,6 +67,17 @@ module dc1Deploy 'vm.bicep' = {
     aaConfiguration: 'ADDomain_NewForest.localhost'
   }
 }
+module vm0Deploy 'vm.bicep' = {
+  name: 'vm1Deploy'
+  scope: rg
+  params: {
+    vmName:          'VM0'
+    vmIp:            '10.0.0.200'
+    vmSubnetId:      networkDeploy.outputs.hubSubnetId
+    aaId:            automationDeploy.outputs.automationAccountId
+    aaConfiguration: ''
+  }
+}
 /*
 module vm2Deploy 'vm.bicep' = {
   name: 'vm2Deploy'
