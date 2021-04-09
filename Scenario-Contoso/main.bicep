@@ -1,21 +1,11 @@
 targetScope = 'subscription'
 
 param rgName string            = 'Contoso-RG'
-param deployHubBastion bool    = false
-param deploySpoke1Bastion bool = true
+param deployHubBastion bool    = true
+param deploySpoke1Bastion bool = false
 param deploySpoke2Bastion bool = false
 param deployAaCompileJob bool  = true
 param gwExists  bool           = false
-
-/*
-// =============================
-var deployHubBastion    = false
-var deploySpoke1Bastion = true
-var deploySpoke2Bastion = true
-var deployAaCompileJob  = true
-var gwExists            = false
-// =============================
-*/
 
 resource rg 'Microsoft.Resources/resourceGroups@2020-10-01' = {
   name: rgName
@@ -67,8 +57,9 @@ module dc1Deploy 'vm.bicep' = {
     aaConfiguration: 'ADDomain_NewForest.localhost'
   }
 }
+/*
 module vm0Deploy 'vm.bicep' = {
-  name: 'vm1Deploy'
+  name: 'vm0Deploy'
   scope: rg
   params: {
     vmName:          'VM0'
@@ -78,6 +69,7 @@ module vm0Deploy 'vm.bicep' = {
     aaConfiguration: ''
   }
 }
+*/
 /*
 module vm2Deploy 'vm.bicep' = {
   name: 'vm2Deploy'
@@ -91,7 +83,7 @@ module vm2Deploy 'vm.bicep' = {
   }
 }
 */
-// Remember: "Spoke1-to-Hub-Peering cannot have UseRemoteGateway flag set to true because remote virtual network Hub referenced by the peering does not have any gateways."
+/*
 module gatewayDeploy 'gateway.bicep' = {
   name: 'gatewayDeploy'
   scope: rg
@@ -100,3 +92,4 @@ module gatewayDeploy 'gateway.bicep' = {
     gatewaySubnetId: networkDeploy.outputs.hubGatewaySubnetId
   }
 }
+*/
