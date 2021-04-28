@@ -1,4 +1,5 @@
-
+# New Tenant
+# -----------
 # Tenant fqdn
 rand=$((1000 + $RANDOM % 8999))
 adatum="adatum$rand"
@@ -22,7 +23,8 @@ echo $adatum
 echo $aa
 # Verify your identity:  +49  15126358905   (true)
 
-# Azure Pass
+# Azure Pass Subscription
+# -----------------------
 # https://vouchers.cloudapp.net/AzurePass/
 # 
 # Login:    thomas_jaekel@hotmail.com
@@ -34,8 +36,19 @@ echo $aa
 # Tenant Security defaults
 
 # User Paul
+# ---------
 #   Tenant: Global Administrator
 #   Subscription: Owner
+#   CloudShell Paul
 
-# CloudShell Paul
+# Service Principal (SP) for Postman App (SP becomes Contributor role at subscription level)
+# ------------------------------------------------------------------------------------------
+sp=$(az ad sp create-for-rbac --name postman)
+
+clientId=$(echo $sp | jq .appId | tr -d '"')
+clientSecret=$(echo $sp | jq .password | tr -d '"')
+subscriptionId=$(az account show --query id --output tsv)
+tenantId=$(az account show --query tenantId --output tsv)
+
+echo -e "\nsubscriptionId $subscriptionId\ntenantId       $tenantId\nclientId       $clientId\nclientSecret   $clientSecret\n"
 
