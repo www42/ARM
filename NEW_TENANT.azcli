@@ -1,8 +1,8 @@
 
 # Tenant fqdn
-ran=$((1000 + $RANDOM % 8999))
-adatum="adatum$ran"
-fqdn="adatum$ran.onmicrosoft.com"
+rand=$((1000 + $RANDOM % 8999))
+adatum="adatum$rand"
+fqdn="adatum$rand.onmicrosoft.com"
 echo $fqdn
 
 # Account admin (aa)
@@ -32,3 +32,10 @@ echo $aa
 
 
 # Tenant Security defaults
+
+# User Paul
+#   Tenant: Global Administrator
+#   Subscription: Owner
+
+# CloudShell Paul
+
