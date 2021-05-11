@@ -7,21 +7,21 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-01-01' = {
   location: deployment().location
 }
 
-// First Automation Account
-// Remember: Automation account jobs are not idempotent! This means 
-//    deployAaJob: true         only for the first time, in later deployment set to 'false'
-//
-module automationDeploy 'automation.bicep' = {
+// First: Automation Account
+module automationDeploy 'Bicep/AutomationAccount.bicep' = {
   name: 'automationDeploy'
   scope: rg
   params: {
     aaName: 'Contoso-Automation'
-    deployAaJob: false
+    
+    // Attention! Automation account jobs are not idempotent! This means 
+    //    deployAaJob: true     only for the first time, in later deployment set to 'false'
+    deployAaJob: true
   }
 }
 
-// Next Hub and Spoke 
-module hubAndSpokeDeploy 'Hub-and-Spoke.bicep' = {
+// Next: Hub and Spoke 
+module hubAndSpokeDeploy 'Bicep/HubAndSpoke.bicep' = {
   name: 'hubAndSpokeDeploy'
   scope: rg
   params: {

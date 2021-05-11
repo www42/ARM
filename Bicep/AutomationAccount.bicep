@@ -8,7 +8,7 @@ param aaModuleContentLink string = 'https://psg-prod-eastus.azureedge.net/packag
 
 // DSC configurations
 param aaConfigurationName string = 'ADDomain_NewForest'
-param aaConfigurationSourceUri string = 'https://raw.githubusercontent.com/www42/arm/master/dscConfigs/ADDomain_NewForest_paramCredentials.ps1'
+param aaConfigurationSourceUri string = 'https://raw.githubusercontent.com/www42/arm/master/DSC/ADDomain_NewForest.ps1'
 
 // Location
 param location string = resourceGroup().location

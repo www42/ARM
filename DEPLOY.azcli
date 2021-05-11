@@ -1,25 +1,26 @@
-file='Scenario_Hybrid.bicep'
-name='contoso01'
+file=main.Scenario-HubAndSpoke.bicep
+rgName='Contoso-RG'
+location='westeurope'
 
-# --- Group deployment ----------------
-az deployment group create --template-file $file --name $name --resource-group $rgName 
+# --- Subscription deployment ------------------
+az deployment sub create --template-file $file --location $location --name 'contosoDeploy' \
+    --parameters rgName=$rgName \
+    --confirm-with-what-if --what-if-result-format ResourceIdOnly
+
+
+az deployment sub list --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp,duration:properties.duration}, &timestamp)) | [0:4]" --output table
 
 az deployment group list --resource-group $rgName --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp))" --output table
 
-az deployment group show --resource-group $rgName --name $name --query "properties.outputs"
 
+
+
+
+
+# --- Tabula rasa resource group ------------------
+az deployment group create --name 'tabulaRasa' --resource-group $rgName --mode Complete --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/empty.json" --no-wait
+az deployment group list --resource-group $rgName --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp))" --output table
 az resource list --resource-group $rgName --query "sort_by([].{name:name,Type:type,location:location},&Type)" --output table
 
-
-# --- Group tabula rasa ----------------
-uri="https://raw.githubusercontent.com/www42/arm/master/templates/empty.json"
-az deployment group create --name tabulaRasa01 --resource-group $rgName --mode Complete --template-uri $uri --no-wait
-
-# --- Group delete ----------------
+# --- Delete resource group ----------------
 az group delete --resource-group $rgName --yes --no-wait
-
-# --- Group create ----------------
-az group list --query "[].{name:name,location:location,provisioningState:properties.provisioningState}" --output table
-az group create --name $rgName --location $location
-location='westeurope'
-rgName='Contoso-RG'
