@@ -1,5 +1,5 @@
 file=main.Scenario-HubAndSpoke.bicep
-rgName='Contoso-RG'
+rgName='Adatum-RG'
 location='westeurope'
 
 # --- Subscription deployment ------------------

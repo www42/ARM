@@ -12,7 +12,7 @@ module automationDeploy 'Bicep/AutomationAccount.bicep' = {
   name: 'automationDeploy'
   scope: rg
   params: {
-    aaName: 'Contoso-Automation'
+    aaName: 'Adatum-Automation'
     
     // Attention! Automation account jobs are not idempotent! This means 
     //    deployAaJob: true     only for the first time, in later deployment set to 'false'

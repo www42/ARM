@@ -58,7 +58,7 @@ resource aaJob 'Microsoft.Automation/automationAccounts/compilationjobs@2020-01-
       name: '${aaConfigurationName}'
     }
     parameters: {
-      DomainName: 'contoso.com'
+      DomainName: 'adatum.com'
       DomainAdminName: 'Student'
       DomainAdminPassword: 'Pa55w.rd1234'      
     }
