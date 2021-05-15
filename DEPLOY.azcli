@@ -1,6 +1,6 @@
 file=Scenario-SingleWindowsVM.bicep
 
-rgName='Ironman-RG'
+rgName='MI-RG'
 location='westeurope'
 
 # --- Subscription deployment ------------------

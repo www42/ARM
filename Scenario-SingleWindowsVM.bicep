@@ -25,14 +25,14 @@ module virtualMachine1 'Bicep/WindowsVM.bicep' = {
     vmSubnetId: virtualNetwork.outputs.serverSubnetId
   }
 }
-module virtualMachine2 'Bicep/WindowsVM.bicep' = {
-  name: 'vm2Deploy'
-  scope: rg
-  params: {
-    vmName: 'VM2'
-    vmSubnetId: virtualNetwork.outputs.databaseSubnetId
-  }
-}
+// module virtualMachine2 'Bicep/WindowsVM.bicep' = {
+  // name: 'vm2Deploy'
+  // scope: rg
+  // params: {
+    // vmName: 'VM2'
+    // vmSubnetId: virtualNetwork.outputs.databaseSubnetId
+  // }
+// }
 
 // Third: Bastion Host
 module bastionHost 'Bicep/BastionHost.bicep' = {
