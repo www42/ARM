@@ -1,6 +1,6 @@
-file=Scenario-SingleWindowsVM.bicep
+file=Scenario-HubAndSpoke.bicep
 
-rgName='MI-RG'
+rgName='Adatum-RG'
 location='westeurope'
 
 # --- Subscription deployment ------------------
