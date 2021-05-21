@@ -8,6 +8,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-01-01' = {
 }
 
 // First: Virtual Network
+// ----------------------
 module virtualNetwork 'Bicep/VirtualNetwork.bicep' = {
   name: 'networkDeploy'
   scope: rg
@@ -17,14 +18,20 @@ module virtualNetwork 'Bicep/VirtualNetwork.bicep' = {
 }
 
 // Second: Virtual Machine(s)
+// --------------------------
+//
+//         bicep/WindowsVMpublicIP.bicep  --> Windows Server mit public IP and NSG (for RDP management)
+//         bicep/WindowsVM.bicep          --> Windows Server (for Bastion Host)
+
 module virtualMachine1 'Bicep/WindowsVM.bicep' = {
   name: 'vm1Deploy'
   scope: rg
   params: {
-    vmName: 'VM1'
-    vmSubnetId: virtualNetwork.outputs.serverSubnetId
+     vmName: 'VM1'
+     vmSubnetId: virtualNetwork.outputs.serverSubnetId
   }
 }
+
 // module virtualMachine2 'Bicep/WindowsVM.bicep' = {
   // name: 'vm2Deploy'
   // scope: rg
@@ -35,6 +42,7 @@ module virtualMachine1 'Bicep/WindowsVM.bicep' = {
 // }
 
 // Third: Bastion Host
+// -------------------
 module bastionHost 'Bicep/BastionHost.bicep' = {
   name: 'bastionDeploy'
   scope: rg

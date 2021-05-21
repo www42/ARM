@@ -1,12 +1,12 @@
-file=Scenario-HubAndSpoke.bicep
+file=Scenario-SingleWindowsVM.bicep
 
-rgName='Adatum-RG'
-location='westeurope'
+rgName='MI-RG'
+location='northeurope'
 
 # --- Subscription deployment ------------------
-az deployment sub create --template-file $file --location $location --name 'bicepDeploy' \
-    --parameters rgName=$rgName \
-    --confirm-with-what-if --what-if-result-format ResourceIdOnly
+az deployment sub create --template-file $file --location $location --name 'bicepDeploy2' \
+    --parameters rgName=$rgName
+#    --confirm-with-what-if --what-if-result-format ResourceIdOnly
 
 
 az deployment sub list --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp,duration:properties.duration}, &timestamp)) | [0:4]" --output table
