@@ -1,10 +1,11 @@
+# file=Scenario-HubAndSpoke.bicep
 file=Scenario-SingleWindowsVM.bicep
 
-rgName='MI-RG'
-location='northeurope'
+rgName='Web-RG'
+location='westeurope'
 
 # --- Subscription deployment ------------------
-az deployment sub create --template-file $file --location $location --name 'bicepDeploy2' \
+az deployment sub create --template-file $file --location $location --name 'bicepDeploy5' \
     --parameters rgName=$rgName
 #    --confirm-with-what-if --what-if-result-format ResourceIdOnly
 
