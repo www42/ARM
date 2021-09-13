@@ -16,7 +16,7 @@
         "copy": [
             {
                 "name": "networkInterfaceNames",
-                "count": 3,
+                "count": "[length(parameters('virtualMachineNames'))]",
                 "input": "[concat( parameters('virtualMachineNames')[copyIndex('networkInterfaceNames')], '-Nic'  )]"
             }
         ]
