@@ -10,7 +10,7 @@
             "type": "string",
             "defaultValue": "VirtualNetwork"
         },
-        "subnetCount": {
+        "count": {
             "type": "int",
             "defaultValue": 3
         },
@@ -29,9 +29,37 @@
                 "172.16.0.0/24",
                 "192.168.0.0/24"
             ]
+        },
+        "virtualMachineNames": {
+            "type": "array",
+            "defaultValue": [
+                "VM-0",
+                "VM-1",
+                "VM-2"
+            ]
+        },
+        "virtualMachineSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2"
+        },
+        "adminUserName": {
+           "type": "string",
+           "defaultValue": "Student"
+        },
+        "adminPassword": {
+           "type": "securestring",
+           "defaultValue": "Pa55w.rd1234"
         }
     },
-    "variables": {},
+    "variables": {
+        "copy": [
+            {
+                "name": "networkInterfaceName",
+                "count": "[parameters('count')]",
+                "input": "[concat(parameters('virtualMachineNames')[copyIndex('networkInterfaceName')], '-Nic')]"
+            }
+        ]
+    },
     "resources": [
         {
             "type": "Microsoft.Network/virtualNetworks",
@@ -45,11 +73,11 @@
             }
         },
         {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
             "copy": {
                 "name": "subnetLoop",
-                "count": "[parameters('subnetCount')]"
+                "count": "[parameters('count')]"
             },
-            "type": "Microsoft.Network/virtualNetworks/subnets",
             "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetNames')[copyIndex()])]",
             "apiVersion": "2020-11-01",
             "location": "[parameters('location')]",
@@ -59,7 +87,74 @@
             "properties": {
                 "addressPrefix": "[parameters('subnetAddressPrefixes')[copyIndex()]]"
             }
-        }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "copy": {
+                "name": "networkInterfaceLoop",
+                "count": "[parameters('count')]"
+            },
+            "name": "[concat(parameters('virtualMachineNames')[copyIndex()], '-Nic')]",
+            "apiVersion": "2020-11-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetNames')[copyIndex()])]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                   {
+                       "name": "ipConfig1",
+                       "properties": {
+                           "privateIPAllocationMethod": "Dynamic",
+                           "subnet": {
+                               "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetNames')[copyIndex()])]"
+                           }
+                       }
+                   }
+               ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachineNames')[copyIndex()]]",
+            "apiVersion": "2021-03-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[variables('vmOsDiskName')]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmComputerName')]",
+                    "adminUsername": "[parameters('adminUserName')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNetworkInterfaceName'))]"
+                        }
+                    ]
+                }
+            },
+            "copy": {
+                "name": "virtualMachineLoop",
+                "count": "[parameters('count')]"
+            }
+         }
     ],
     "outputs": {
         "uniqueString": {
