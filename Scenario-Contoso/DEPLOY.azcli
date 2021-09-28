@@ -1,3 +1,4 @@
+rgName='Contoso-RG'
 location='westeurope'
 
 # --- Subscription deployment ------------------
@@ -17,8 +18,8 @@ az deployment sub create --template-file $file --location $location --name 'cont
 az deployment group create --name 'tabulaRasa' --resource-group $rgName --mode Complete --template-uri "https://raw.githubusercontent.com/www42/arm/master/templates/empty.json" --no-wait
 az deployment group list --resource-group $rgName --query "reverse(sort_by([].{Name:name,provisioningState:properties.provisioningState,timestamp:properties.timestamp}, &timestamp))" --output table
 az resource list --resource-group $rgName --query "sort_by([].{name:name,Type:type,location:location},&Type)" --output table
-rgName='Contoso-RG'
 
+az group create --name $rgName --location $location
 
 # --- Subscription ------------------
 az account set --subscription $subscriptionId
