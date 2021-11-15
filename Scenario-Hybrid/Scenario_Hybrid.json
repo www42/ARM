@@ -67,8 +67,16 @@
             "metadata": {
                 "description": "Name of the Windows Server AD Domain."
             },
-            "defaultValue": "contoso.com"
-        }        
+            "defaultValue": "adatum.com"
+        },
+        "domainAdminName": {
+            "type": "string",
+            "defaultValue": "Administrator"
+        },
+        "domainAdminPassword": {
+            "type": "string",
+            "defaultValue": "Pa55w.rd1234"
+        }     
     },
     "functions": [],
     "variables": {
@@ -86,8 +94,10 @@
             "DomainControllerConfig": {
                 "name": "ADDomain_NewForest",
                 "description": "Domain Controller DSC configuration.",
-                "uri": "https://raw.githubusercontent.com/www42/arm/master/dscConfigs/ADDomain_NewForest_paramCredentials.ps1",
-                "domainName": "[parameters('domainName')]"
+                "uri": "https://raw.githubusercontent.com/www42/ARM/master/DSC/ADDomain_NewForest.ps1",
+                "DomainName": "[parameters('domainName')]",
+                "DomainAdminName": "[parameters('domainAdminName')]",
+                "DomainAdminPassword": "[parameters('domainAdminPassword')]"
             }
         }
     },
