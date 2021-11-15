@@ -1,1 +1,0 @@
-# ContosoRootCertificate.pfx is the root certificate installed on Virtual Gateway (HubAndSpoke)
