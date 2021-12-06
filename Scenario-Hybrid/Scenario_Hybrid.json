@@ -67,7 +67,7 @@
             "metadata": {
                 "description": "Name of the Windows Server AD Domain."
             },
-            "defaultValue": "adatum.com"
+            "defaultValue": "trainymotion.com"
         },
         "domainAdminName": {
             "type": "string",
