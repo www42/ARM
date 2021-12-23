@@ -1,7 +1,7 @@
-$GatewayName = "Contoso-Gateway"
-$RgName = "Contoso-RG"
-$RootCertificateName="ContosoRootCertificate"
-$ClientCertificateName="ContosoClientCertificate"
+$GatewayName = "Adatum-Gateway"
+$RgName = "Adatum-RG"
+$RootCertificateName="AdatumRootCertificate"
+$ClientCertificateName="AdatumClientCertificate"
 $PfxPassword = 'Pa55w.rd1234'
 
 # 1. Root Certificate
