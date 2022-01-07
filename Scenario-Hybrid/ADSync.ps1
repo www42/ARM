@@ -13,8 +13,10 @@ Start-ADSyncSyncCycle -PolicyType Delta
 
 #   MSOnline --> Stop Sync
 #   ----------------------
-Get-Module    -Name "C:\Program Files\Microsoft Azure Active Directory Connect\AADPowerShell\MSOnline.psd1" -ListAvailable
-Import-Module -Name "C:\Program Files\Microsoft Azure Active Directory Connect\AADPowerShell\MSOnline.psd1"
+# on DC1
+# Get-Module    -Name "C:\Program Files\Microsoft Azure Active Directory Connect\AADPowerShell\MSOnline.psd1" -ListAvailable
+# Import-Module -Name "C:\Program Files\Microsoft Azure Active Directory Connect\AADPowerShell\MSOnline.psd1"
+Get-Module -ListAvailable -Name MSOnline
 
 Connect-MsolService
 Set-MsolDirSyncEnabled -EnableDirSync $false -Force
