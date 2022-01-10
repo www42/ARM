@@ -9,7 +9,7 @@ $DomainSuffix = Get-ADDomain | select -ExpandProperty DNSRoot
 
 New-ADGroup -GroupScope Global -Name $Abteilung -Path $OUPath
 
-for ($i = 6; $i -le 10; $i++)
+for ($i = 1; $i -le 10; $i++)
 {  
   $Name = "$Abteilung$i"
   New-ADUser `
@@ -20,6 +20,3 @@ for ($i = 6; $i -le 10; $i++)
 
   Add-ADGroupMember -Identity $Abteilung -Members $Name
 }
-
-
-Add-ADGroupMember "Domain Admins" "TestUser";
